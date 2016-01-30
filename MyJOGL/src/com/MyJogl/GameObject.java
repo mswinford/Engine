@@ -1,6 +1,8 @@
 package com.MyJogl;
 
-public class GameObject {
+import com.MyJogl.Model.Model;
+
+public abstract class GameObject {
 	private Model model;
 	
 	
@@ -8,10 +10,10 @@ public class GameObject {
 		
 	}
 	public GameObject() {
-		this(new Model());
+		model = null;
 	}
 	
-	public void setMesh(Model model) {
+	public void setModel(Model model) {
 		this.model = model;
 	}
 }

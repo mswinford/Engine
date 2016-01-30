@@ -1,162 +1,145 @@
 package com.MyJogl;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import com.jogamp.newt.event.WindowAdapter;
-import com.jogamp.newt.event.WindowEvent;
-import com.jogamp.newt.opengl.GLWindow;
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowListener;
+
+import javax.swing.JButton;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
-import com.jogamp.opengl.GLProfile;
-import com.jogamp.opengl.util.FPSAnimator;
-import com.jogamp.common.nio.Buffers;
-
-
+import com.jogamp.opengl.awt.GLCanvas;
 
 public class Engine implements GLEventListener {
+	private Frame window;
+	private GLCanvas canvas;
 	
+	private Game game;
+	
+	public Engine() {		
+		canvas = new GLCanvas();
+		canvas.addGLEventListener(this);
+		
+		
+		window = new Frame("Engine");
+		window.setLayout(new GridLayout(2, 1));
+		window.add(canvas);
+		window.addWindowListener(new WindowListener() {
+			
+			@Override
+			public void windowOpened(java.awt.event.WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowIconified(java.awt.event.WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeiconified(java.awt.event.WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeactivated(java.awt.event.WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent e) {
+				System.exit(0);
+				
+			}
+			
+			@Override
+			public void windowClosed(java.awt.event.WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowActivated(java.awt.event.WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		window.setSize(640, 480);
+		initialize();
+		window.setVisible(true);
+		
+	}	
+
+	private void initialize() {
+		MenuBar menuBar = new MenuBar();
+		Menu menu = new Menu("File");
+		MenuItem item1 = new MenuItem("Run...");
+		item1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				runGame();
+			}
+		});
+		menu.add(item1);
+		menuBar.add(menu);
+		window.setMenuBar(menuBar);
+		
+		JButton runButton = new JButton("Run...");
+		runButton.setSize(new Dimension(30, 20));
+		runButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				runGame();				
+			}
+		});
+		window.add(runButton);
+		
+	}
+
 	public static void main(String[] args) {
-		// Get the default OpenGL profile, reflecting the best for your running platform
-        GLProfile glp = GLProfile.getDefault();
-        // Specifies a set of OpenGL capabilities, based on your profile.
-        GLCapabilities caps = new GLCapabilities(glp);
-        // Create the OpenGL rendering canvas
-        GLWindow window = GLWindow.create(caps);
+		new Engine();
+		
+	}
 
-        // Create a animator that drives canvas' display() at the specified FPS.
-        final FPSAnimator animator = new FPSAnimator(window, 60, true);
-
-        window.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowDestroyNotify(WindowEvent arg0) {
-                // Use a dedicate thread to run the stop() to ensure that the
-                // animator stops before program exits.
-                new Thread() {
-                    @Override
-                    public void run() {
-                        if (animator.isStarted())
-                            animator.stop();    // stop the animator loop
-                        System.exit(0);
-                    }
-                }.start();
-            }
-        });
-
-        window.addGLEventListener(new Engine());
-        window.setSize(300, 300);
-        window.setTitle("NEWT Test");
-        window.setVisible(true);
-        animator.start();  // start the animator loop
-    }
-
+	public void runGame(){
+		if (game != null && game.isRunning()) {
+			return;
+		}
+		game = new Game();
+		game.run();
+	}
+	
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		// TODO Auto-generated method stub
-		shaderID = Util.loadShaders(drawable.getGL().getGL4(), "src/vertex.vp", "src/fragment.fp");
-		
-		
-		GL2 gl = drawable.getGL().getGL2();
-
-		fb = Buffers.newDirectFloatBuffer(triangle);
-		vertexBuffer = Buffers.newDirectIntBuffer(1);
-		
-		gl.glGenBuffers(1, vertexBuffer);
-		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get(0));
-		gl.glBufferData(GL.GL_ARRAY_BUFFER, fb.capacity()*Buffers.SIZEOF_FLOAT, fb, GL.GL_STATIC_DRAW);
-        
 	}
-	
 
 	@Override
 	public void dispose(GLAutoDrawable drawable) {
-		update();
-		render(drawable);		
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		update();
-		render(drawable);
+		// TODO Auto-generated method stub		
 	}
 
 	@Override
-	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
-			int height) {
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		// TODO Auto-generated method stub
 		
 	}
-	
-	
-	private void update() {
-
-	}
-	
-	private void render(GLAutoDrawable drawable) {
-		GL2 gl = drawable.getGL().getGL2();
-		gl.glEnable(GL.GL_DEPTH_TEST);
-		gl.glDepthFunc(GL.GL_LESS);
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);	
-		
-		gl.glUseProgram(shaderID);
-		
-		gl.glEnableVertexAttribArray(0);
-		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get(0));
-		gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 0, 0);
-		
-		gl.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
-		gl.glDisableVertexAttribArray(0);
-			
-	}
-	
-	private FloatBuffer fb;
-	private IntBuffer vertexBuffer;
-	int shaderID;
-	
-	private float[] triangle = {-1, -1, 0,
- 			1, -1, 0,
- 			0,  1, 0,
- 			};
-	
-	private float[] square = {
-		      -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-		      -1.0f,-1.0f, 1.0f,
-		      -1.0f, 1.0f, 1.0f, // triangle 1 : end
-		      1.0f, 1.0f,-1.0f, // triangle 2 : begin
-		      -1.0f,-1.0f,-1.0f,
-		      -1.0f, 1.0f,-1.0f, // triangle 2 : end
-		     1.0f,-1.0f, 1.0f,
-		     -1.0f,-1.0f,-1.0f,
-		     1.0f,-1.0f,-1.0f,
-		     1.0f, 1.0f,-1.0f,
-		     1.0f,-1.0f,-1.0f,
-		     -1.0f,-1.0f,-1.0f,
-		     -1.0f,-1.0f,-1.0f,
-		     -1.0f, 1.0f, 1.0f,
-		     -1.0f, 1.0f,-1.0f,
-		     1.0f,-1.0f, 1.0f,
-		     -1.0f,-1.0f, 1.0f,
-		     -1.0f,-1.0f,-1.0f,
-		     -1.0f, 1.0f, 1.0f,
-		     -1.0f,-1.0f, 1.0f,
-		     1.0f,-1.0f, 1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     1.0f,-1.0f,-1.0f,
-		     1.0f, 1.0f,-1.0f,
-		     1.0f,-1.0f,-1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     1.0f,-1.0f, 1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     1.0f, 1.0f,-1.0f,
-		     -1.0f, 1.0f,-1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     -1.0f, 1.0f,-1.0f,
-		     -1.0f, 1.0f, 1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     -1.0f, 1.0f, 1.0f,
-		     1.0f,-1.0f, 1.0f
-		 };
 
 }
