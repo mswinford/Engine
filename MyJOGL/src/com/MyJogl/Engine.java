@@ -16,7 +16,7 @@ import com.jogamp.common.nio.Buffers;
 
 
 
-public class HelloTriangle implements GLEventListener {
+public class Engine implements GLEventListener {
 	
 	public static void main(String[] args) {
 		// Get the default OpenGL profile, reflecting the best for your running platform
@@ -45,7 +45,7 @@ public class HelloTriangle implements GLEventListener {
             }
         });
 
-        window.addGLEventListener(new HelloTriangle());
+        window.addGLEventListener(new Engine());
         window.setSize(300, 300);
         window.setTitle("NEWT Test");
         window.setVisible(true);
