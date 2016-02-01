@@ -6,4 +6,6 @@ public abstract class Model {
 	public void draw() {
 		
 	}
+	
+	//public void 
 }

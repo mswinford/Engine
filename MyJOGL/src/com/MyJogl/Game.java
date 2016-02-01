@@ -9,22 +9,23 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
-import com.jogamp.common.nio.Buffers;
 
 
 
 public class Game implements GLEventListener {
-	private Config config;
 	private boolean isRunning = false;
 	private SceneGraph gameGraph;
+	private Camera camera;
+	private Config settings;
 	
 	public Game() {
+		settings = new Config();
 		gameGraph = new SceneGraph();
-		config = new Config();
+		camera = new Camera(settings.FOV, settings.aspectRatio, settings.drawDistance);
 	}
 	
 	public void run() {
-		GLWindow window = GLWindow.create(config.caps);
+		GLWindow window = GLWindow.create(Config.caps);
 		window.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowDestroyNotify(WindowEvent e) {

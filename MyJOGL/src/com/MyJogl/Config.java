@@ -6,13 +6,15 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 
 public class Config {
-	String configFilepath;
-	GLProfile glp;
-	GLCapabilities caps;
-	Dimension windowSize;
-	boolean fullscreen;
-	boolean vsync;
-	int FOV;
+	public static String configFilepath;
+	public static GLProfile glp;
+	public static GLCapabilities caps;
+	public static Dimension windowSize;
+	public static boolean fullscreen;
+	public static boolean vsync;
+	public static float FOV = 60;
+	public static float aspectRatio = 16.0f/9.0f;
+	public static float drawDistance = 1000.0f;
 	
 	public Config() {
 		glp = GLProfile.getDefault();
