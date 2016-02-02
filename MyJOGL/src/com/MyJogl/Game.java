@@ -1,7 +1,9 @@
 package com.MyJogl;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import org.joml.Vector3f;
+
+import com.MyJogl.GameObject.Character;
+import com.MyJogl.Model.Model;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.opengl.GLWindow;
@@ -9,41 +11,47 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.util.FPSAnimator;
 
 
 
-public class Game implements GLEventListener {
-	private boolean isRunning = false;
-	private SceneGraph gameGraph;
+public class Game implements GLEventListener, Runnable {
+	private volatile boolean isRunning = false;
+	private FPSAnimator animator;
+	private SceneManager sceneManager;
 	private Camera camera;
-	private Config settings;
 	
 	public Game() {
-		settings = new Config();
-		gameGraph = new SceneGraph();
-		camera = new Camera(settings.FOV, settings.aspectRatio, settings.drawDistance);
+		Config.initialize();
+		sceneManager = new SceneManager();
+		camera = new Camera();
 	}
 	
 	public void run() {
-		GLWindow window = GLWindow.create(Config.caps);
+		final GLWindow window = GLWindow.create(Config.caps);
+		animator = new FPSAnimator(window, 60, Config.vsync);
+		animator.setUpdateFPSFrames(3, null);
+		
 		window.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowDestroyNotify(WindowEvent e) {
+				window.getAnimator().stop();
 				stop();
 			}
 		});
 		
+		window.setAnimator(animator);
+		animator.start();
         window.addGLEventListener(this);
-        window.setSize(300, 300);
+        window.setSize((int)Config.windowSize.getWidth(), (int)Config.windowSize.getHeight());
         window.setTitle("Game");
         window.setVisible(true);
         isRunning = true;
 	}
 	
 	public void stop() {
-		//TODO save the game state before closing
-		
-		isRunning = false;		
+		isRunning = false;
+		System.out.println("Game Stopped");
 	}
 	
 	public boolean isRunning() {
@@ -51,12 +59,22 @@ public class Game implements GLEventListener {
 	}
 	
 	public static void main(String[] args) {
-		(new Game()).run();
+		new Thread(new Game()).run();
     }
 
 	@Override
-	public void init(GLAutoDrawable drawable) {
-		// TODO Auto-generated method stub        
+	public void init(GLAutoDrawable drawable) {			
+		shaderID = Util.loadShaders(drawable.getGL().getGL4(), "src/vertex.vp", "src/fragment.fp");
+		
+		
+		//below is for testing
+		GL2 gl = drawable.getGL().getGL2();
+		model.init(gl);
+		model.setShaderID(shaderID);
+		model.setMatrixID(gl.glGetUniformLocation(shaderID, "MVP"));
+		character.setModel(model);
+		scene.add(character);
+		sceneManager.setScene(scene);
 	}
 
 	@Override
@@ -73,79 +91,39 @@ public class Game implements GLEventListener {
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
-		
-		render(drawable);
-		
 	}
 	
 	
 	private void update() {
+		System.out.println((int)animator.getLastFPS());
 		
+		//character.setScale(character.getScale() + scaleTheta);
+		//character.translate(deltaXYZ);
+		//character.Rotate(rot);
 	}
 	
 	private void render(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL.GL_LESS);
+		gl.glEnable(GL.GL_CULL_FACE);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);	
 		
 		gl.glUseProgram(shaderID);
 		
-		gl.glEnableVertexAttribArray(0);
-		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get(0));
-		gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 0, 0);
 		
-		gl.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
-		gl.glDisableVertexAttribArray(0);
-			
+		//below is for testing
+		sceneManager.drawScene(gl, camera.getVP());
+		
+		
 	}
 	
-	private FloatBuffer fb;
-	private IntBuffer vertexBuffer;
 	int shaderID;
-	
-	private float[] triangle = {-1, -1, 0,
- 			1, -1, 0,
- 			0,  1, 0,
- 			};
-	
-	private float[] square = {
-		      -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-		      -1.0f,-1.0f, 1.0f,
-		      -1.0f, 1.0f, 1.0f, // triangle 1 : end
-		      1.0f, 1.0f,-1.0f, // triangle 2 : begin
-		      -1.0f,-1.0f,-1.0f,
-		      -1.0f, 1.0f,-1.0f, // triangle 2 : end
-		     1.0f,-1.0f, 1.0f,
-		     -1.0f,-1.0f,-1.0f,
-		     1.0f,-1.0f,-1.0f,
-		     1.0f, 1.0f,-1.0f,
-		     1.0f,-1.0f,-1.0f,
-		     -1.0f,-1.0f,-1.0f,
-		     -1.0f,-1.0f,-1.0f,
-		     -1.0f, 1.0f, 1.0f,
-		     -1.0f, 1.0f,-1.0f,
-		     1.0f,-1.0f, 1.0f,
-		     -1.0f,-1.0f, 1.0f,
-		     -1.0f,-1.0f,-1.0f,
-		     -1.0f, 1.0f, 1.0f,
-		     -1.0f,-1.0f, 1.0f,
-		     1.0f,-1.0f, 1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     1.0f,-1.0f,-1.0f,
-		     1.0f, 1.0f,-1.0f,
-		     1.0f,-1.0f,-1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     1.0f,-1.0f, 1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     1.0f, 1.0f,-1.0f,
-		     -1.0f, 1.0f,-1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     -1.0f, 1.0f,-1.0f,
-		     -1.0f, 1.0f, 1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     -1.0f, 1.0f, 1.0f,
-		     1.0f,-1.0f, 1.0f
-		 };
+	float scaleTheta = 0.01f;
+	Vector3f deltaXYZ = new Vector3f(0.0f, 0.0f, 0.01f);
+	float[] rot = {0.0f, 0.01f, 0.01f};
+	Model model = new Model();
+	Character character = new Character("Test Character");
+	Scene scene = new Scene();
 
 }

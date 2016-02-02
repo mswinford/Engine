@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL2ES2;
+import com.jogamp.opengl.math.Matrix4;
 
 public class Util {
 
@@ -113,5 +114,15 @@ public class Util {
 		gl.glDeleteShader(f);
 		
 		return shaderProgramID;
+	}
+
+	public static void printMatrix(Matrix4 mat) {
+		float[] mvp = mat.getMatrix();
+		for(int i=0; i<4; i++) {
+			for(int j=0; j<4; j++) {
+				System.out.print(mvp[(4*i)+j] + ", ");
+			}
+			System.out.println();
+		}
 	}
 }

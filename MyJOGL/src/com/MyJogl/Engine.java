@@ -74,7 +74,7 @@ public class Engine implements GLEventListener {
 			}
 		});
 		
-		window.setSize(640, 480);
+		window.setSize(200, 200);
 		initialize();
 		window.setVisible(true);
 		
@@ -114,10 +114,11 @@ public class Engine implements GLEventListener {
 
 	public void runGame(){
 		if (game != null && game.isRunning()) {
+			System.out.println("Game is alreadyRunning");
 			return;
 		}
 		game = new Game();
-		game.run();
+		(new Thread(game)).run();
 	}
 	
 	@Override
