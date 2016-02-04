@@ -1,34 +1,48 @@
 package com.MyJogl.GameObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import com.MyJogl.Logger.Logger;
 import com.MyJogl.Model.Model;
 import com.jogamp.opengl.GL2;
 
-public abstract class GameObject {
+public abstract class GameObject implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9168945136392555460L;
 	protected String name;
 	protected Model model;
 	protected float scale;
 	protected Vector3f translation;
 	protected Quaternionf rotation;
-	//protected Matrix4f mvp;
 	protected ArrayList<GameObject> components;
 	
-	public GameObject(Model model) {
-		
-	}
-	public GameObject(String name) {
-		this.name = name;
+	
+	public GameObject() {
+		name = "";
 		model = null;
 		
 		scale = 1.0f;
 		translation = new Vector3f(0.0f, 0.0f, 0.0f);
 		rotation = new Quaternionf();
+		
+		components = new ArrayList<GameObject>();
 	}
+	public GameObject(Model model) {
+		this();
+		this.model = model;
+	}
+	public GameObject(String name) {
+		this();
+		this.name = name;
+	}
+	
 	
 	public void setName(String name) {
 		this.name = name;
@@ -89,14 +103,18 @@ public abstract class GameObject {
 	public void draw(GL2 gl, Matrix4f vp) {
 		model.draw(gl, calcMVP(vp));
 		
-//		for (GameObject comp : components) {
-//			comp.draw(gl, proj);
-//		}
+		for (GameObject comp : components) {
+			comp.draw(gl, vp);
+		}
 	}
 	
 	private Matrix4f calcMVP(Matrix4f vp) {
 		Matrix4f mvp = vp;
-		mvp.scale(scale).translate(translation).rotate(rotation);
+		mvp.translationRotateScale(translation, rotation, new Vector3f(scale, scale, scale));
+		Logger.writeToLog(name);
+		if (name.equals("Player")) {
+			System.out.println(mvp);
+		}
 		return mvp;
 	}
 }

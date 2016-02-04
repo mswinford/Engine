@@ -1,5 +1,6 @@
 package com.MyJogl.Model;
 
+import java.io.Serializable;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -9,10 +10,13 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
-public class Model {
+public class Model implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 834637561341814527L;
 	private FloatBuffer fb;
 	private IntBuffer vertexBuffer;
-	private int shaderID;
 	private int matrixID;
 	
 	private float[] triangle = {-1, -1, 0,
@@ -20,7 +24,7 @@ public class Model {
  			0,  1, 0,
  			};
 	
-	private float[] square = {
+	private float[] cube = {
 		      -1.0f,-1.0f,-1.0f, // triangle 1 : begin
 		      -1.0f,-1.0f, 1.0f,
 		      -1.0f, 1.0f, 1.0f, // triangle 1 : end
@@ -63,7 +67,6 @@ public class Model {
 	}
 	
 	public void setShaderID(int shaderID) {
-		this.shaderID = shaderID;
 	}
 	public void setMatrixID(int matrixID) {
 		this.matrixID = matrixID;

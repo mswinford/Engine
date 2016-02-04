@@ -1,5 +1,6 @@
 package com.MyJogl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.joml.Matrix4f;
@@ -7,12 +8,20 @@ import org.joml.Matrix4f;
 import com.MyJogl.GameObject.GameObject;
 import com.jogamp.opengl.GL2;
 
-public class Scene {
+public class Scene implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3641979294974138859L;
 	private String sceneName;
 	private ArrayList<GameObject> objects;
 	
 	public Scene() {
 		objects = new ArrayList<GameObject>();
+	}
+	public Scene(String sceneName) {
+		this();
+		this.sceneName = sceneName;
 	}
 	
 	public void setSceneName(String sceneName) {
