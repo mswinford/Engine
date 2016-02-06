@@ -29,6 +29,8 @@ public class Game implements GLEventListener, Runnable {
 	private SceneManager sceneManager;
 	private Camera camera;
 	
+	private long dt = 0;
+	
 	private Matrix4f projection;
 	
 	//indefinite global variables
@@ -40,11 +42,11 @@ public class Game implements GLEventListener, Runnable {
 		Config.initialize();
 		sceneManager = new SceneManager();
 		camera = new Camera();
-		projection = new Matrix4f()
-				.setPerspective((float)Math.toRadians(Config.FOV), (float)(Config.windowSize.getWidth()/Config.windowSize.getHeight()), Config.zNear, Config.zFar);
+		camera.getView().setLookAt(new Vector3f(0.0f, 0.0f, -1.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 1.0f, 0.0f));
+		projection = new Matrix4f().setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar);
+		Logger.writeToLog("Projection:\n" + projection.toString());
 		
-		player = new PlayerCharacter(new Model());
-		player.setName("Player");
+		player = new PlayerCharacter("Player");
 		player.setCamera(new FreeFlyCamera(0.01f));
 		input = new InputHandler(player);
 	}
@@ -73,12 +75,17 @@ public class Game implements GLEventListener, Runnable {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				input.act(e);
+				if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					window.getAnimator().stop();
+					stop();
+				}
 			}
 		});
 		
 		window.setAnimator(animator);
 		animator.start();
         window.addGLEventListener(this);
+        window.setPosition(500, 500);
         window.setSize((int)Config.windowSize.getWidth(), (int)Config.windowSize.getHeight());
         window.setTitle("Game");
         window.setVisible(true);
@@ -103,19 +110,24 @@ public class Game implements GLEventListener, Runnable {
 	public void init(GLAutoDrawable drawable) {			
 		shaderID = ShaderUtils.loadShaders(drawable.getGL().getGL4(), "src/vertex.vp", "src/fragment.fp");
 		
-		
-		//below is for testing
 		GL2 gl = drawable.getGL().getGL2();
-			
+		
+		gl.glEnable(GL.GL_DEPTH_TEST);
+		gl.glDepthFunc(GL.GL_LESS);
+		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+		
+		
+		//below is for testing			
 		Logger.writeToLog("initializing test scene");
 		model.init(gl);
 		model.setShaderID(shaderID);
 		model.setMatrixID(gl.glGetUniformLocation(shaderID, "MVP"));
-		player.setModel(model);
+		character.setModel(model);
+		character.setScale(1.0f);
 		Character c1 = new Character(model);
 		c1.setName("c1");
 		c1.setScale(0.25f);
-		c1.translate(new Vector3f(-0.5f, 0.5f, 0.0f));
+		c1.translate(new Vector3f(-0.5f, 0.5f, -0.5f));
 		Character c2 = new Character(model);
 		c2.setName("c2");
 		c2.setScale(0.25f);
@@ -132,6 +144,7 @@ public class Game implements GLEventListener, Runnable {
 		scene.add(c2);
 		scene.add(c3);
 		scene.add(c4);
+		scene.add(character);
 		scene.add(player);
 		sceneManager.setScene(scene);
 		
@@ -146,6 +159,8 @@ public class Game implements GLEventListener, Runnable {
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
+		dt = animator.getLastFPSPeriod();
+		System.out.println();
 		update();
 		render(drawable);
 	}
@@ -154,36 +169,37 @@ public class Game implements GLEventListener, Runnable {
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
 		Config.windowSize.setSize(width, height);
-		Config.aspectRatio = width/height;
+		Config.aspectRatio = ((float)width)/((float)height);
+		projection.setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar);
+		
 	}
 	
 	
 	private void update() {
-		System.out.println((int)animator.getLastFPS());
+		//System.out.println((int)animator.getLastFPS());
 		
-		character.translate(new Vector3f(0.01f, 0.0f, 0.0f));
-		Logger.writeToLog(character.getTranslation().toString());
-		//character.setScale(character.getScale() + scaleTheta);
-		//character.translate(deltaXYZ);
-		//character.Rotate(rot);
+		character.setScale(character.getScale() + scaleTheta);
+		character.translate(deltaXYZ);
+		character.rotate(rot);
 	}
 	
 	private void render(GLAutoDrawable drawable) {		
 		GL2 gl = drawable.getGL().getGL2();
-		gl.glEnable(GL.GL_DEPTH_TEST);
-		gl.glDepthFunc(GL.GL_LESS);
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);	
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		
 		gl.glUseProgram(shaderID);
 		
 		//below is for testing
-		sceneManager.drawScene(gl, projection.mul(player.getCamera().getView()));
+		//sceneManager.drawScene(gl, projection.mul(player.getCamera().getView()));
+		
+		Matrix4f vp = new Matrix4f().set(projection).mul(player.getCamera().getView());
+		character.draw(gl, vp);
 	}
 	
 	int shaderID;
-	float scaleTheta = 0.01f;
-	Vector3f deltaXYZ = new Vector3f(0.01f, 0.01f, 0.0f);
-	float[] rot = {0.0f, 0.01f, 0.01f};
+	float scaleTheta = 0.0f;
+	Vector3f deltaXYZ = new Vector3f(0.0f, 0.0f, 0.0f);
+	float[] rot = {0.0f, 0.0f, 0.0f};
 	Model model = new Model();
 	Character character = new Character("Test Character");
 	Scene scene = new Scene("Test Scene");

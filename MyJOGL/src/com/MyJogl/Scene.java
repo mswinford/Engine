@@ -1,14 +1,16 @@
 package com.MyJogl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import com.MyJogl.GameObject.GameObject;
+import com.MyJogl.Logger.Logger;
 import com.jogamp.opengl.GL2;
 
-public class Scene implements Serializable{
+public class Scene extends GameObject {
 	/**
 	 * 
 	 */
@@ -35,9 +37,15 @@ public class Scene implements Serializable{
 		objects.add(object);
 	}
 	
+	
 	public void draw(GL2 gl, Matrix4f vp) {
 		for(GameObject object : objects) {
-			object.draw(gl, vp);
+			if(object != null) {
+				object.draw(gl, vp);
+			}
+			else { 
+				Logger.writeToLog("null object in scene: " + sceneName);
+			}
 		}
 	}
 }

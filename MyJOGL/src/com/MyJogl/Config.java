@@ -11,10 +11,10 @@ public class Config {
 	public static GLCapabilities caps;
 	public static Dimension windowSize = new Dimension(200, 150);
 	public static boolean fullscreen = false;
-	public static boolean vsync = true;
+	public static boolean vsync = false;
 	public static float FOV = 60.0f;
 	public static float aspectRatio = 4.0f/3.0f;
-	public static float zNear = 0.01f;
+	public static float zNear = 0.1f;
 	public static float zFar = 10.0f;
 	
 	public Config() {

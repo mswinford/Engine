@@ -13,7 +13,7 @@ public class PlayerCharacter extends Character {
 	private static final long serialVersionUID = 810174614080958148L;
 	
 	private Camera camera;
-	private float moveSpeed = 0.1f;
+	private float moveSpeed = 0.01f;
 
 	public PlayerCharacter(String name) {
 		super(name);
@@ -32,19 +32,22 @@ public class PlayerCharacter extends Character {
 	}
 	
 	public void moveForward() {
-		camera.getView().translate(0.0f, 0.0f, moveSpeed);
-		//this.translate(new Vector3f(0.0f, 0.0f, 0.1f));
+		camera.setTranslation(new Vector3f(0.0f, 0.0f, moveSpeed));
+		camera.updateView();
 	}
 	
 	public void moveBackward() {
-		camera.getView().translate(0.0f, 0.0f, -moveSpeed);
+		camera.setTranslation(new Vector3f(0.0f, 0.0f, -moveSpeed));
+		camera.updateView();
 	}
 	
 	public void strafeLeft() {
-		camera.getView().translate(-moveSpeed, 0.0f, 0.0f);
+		camera.setTranslation(new Vector3f(-moveSpeed, 0.0f, 0.0f));
+		camera.updateView();
 	}
 	
 	public void strafeRight() {
-		camera.getView().translate(moveSpeed, 0.0f, 0.0f);
+		camera.setTranslation(new Vector3f(moveSpeed, 0.0f, 0.0f));
+		camera.updateView();
 	}
 }
