@@ -32,22 +32,22 @@ public class PlayerCharacter extends Character {
 	}
 	
 	public void moveForward() {
-		camera.setTranslation(new Vector3f(0.0f, 0.0f, moveSpeed));
+		camera.translate(new Vector3f(0.0f, 0.0f, moveSpeed));
 		camera.updateView();
 	}
 	
 	public void moveBackward() {
-		camera.setTranslation(new Vector3f(0.0f, 0.0f, -moveSpeed));
+		camera.translate(new Vector3f(0.0f, 0.0f, -moveSpeed));
 		camera.updateView();
 	}
 	
 	public void strafeLeft() {
-		camera.setTranslation(new Vector3f(-moveSpeed, 0.0f, 0.0f));
+		camera.translate(new Vector3f(-moveSpeed, 0.0f, 0.0f));
 		camera.updateView();
 	}
 	
 	public void strafeRight() {
-		camera.setTranslation(new Vector3f(moveSpeed, 0.0f, 0.0f));
+		camera.translate(new Vector3f(moveSpeed, 0.0f, 0.0f));
 		camera.updateView();
 	}
 }

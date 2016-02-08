@@ -20,6 +20,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.util.FPSAnimator;
+import com.sun.java.swing.plaf.windows.resources.windows;
 
 
 
@@ -44,7 +45,6 @@ public class Game implements GLEventListener, Runnable {
 		camera = new Camera();
 		camera.getView().setLookAt(new Vector3f(0.0f, 0.0f, -1.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 1.0f, 0.0f));
 		projection = new Matrix4f().setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar);
-		Logger.writeToLog("Projection:\n" + projection.toString());
 		
 		player = new PlayerCharacter("Player");
 		player.setCamera(new FreeFlyCamera(0.01f));
@@ -60,6 +60,7 @@ public class Game implements GLEventListener, Runnable {
 			@Override
 			public void windowDestroyNotify(WindowEvent e) {
 				window.getAnimator().stop();
+				window.lockSurface();
 				stop();
 			}
 		});
@@ -123,11 +124,11 @@ public class Game implements GLEventListener, Runnable {
 		model.setShaderID(shaderID);
 		model.setMatrixID(gl.glGetUniformLocation(shaderID, "MVP"));
 		character.setModel(model);
-		character.setScale(1.0f);
+		character.setScale(0.25f);
 		Character c1 = new Character(model);
 		c1.setName("c1");
 		c1.setScale(0.25f);
-		c1.translate(new Vector3f(-0.5f, 0.5f, -0.5f));
+		c1.translate(new Vector3f(-0.5f, 0.5f, 0.0f));
 		Character c2 = new Character(model);
 		c2.setName("c2");
 		c2.setScale(0.25f);
@@ -160,7 +161,7 @@ public class Game implements GLEventListener, Runnable {
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		dt = animator.getLastFPSPeriod();
-		System.out.println();
+		System.out.println((int)animator.getLastFPS());
 		update();
 		render(drawable);
 	}
@@ -175,9 +176,7 @@ public class Game implements GLEventListener, Runnable {
 	}
 	
 	
-	private void update() {
-		//System.out.println((int)animator.getLastFPS());
-		
+	private void update() {		
 		character.setScale(character.getScale() + scaleTheta);
 		character.translate(deltaXYZ);
 		character.rotate(rot);
@@ -189,11 +188,10 @@ public class Game implements GLEventListener, Runnable {
 		
 		gl.glUseProgram(shaderID);
 		
-		//below is for testing
-		//sceneManager.drawScene(gl, projection.mul(player.getCamera().getView()));
-		
+		//below is for testing		
 		Matrix4f vp = new Matrix4f().set(projection).mul(player.getCamera().getView());
-		character.draw(gl, vp);
+		sceneManager.drawScene(gl, vp);
+		//character.draw(gl, vp);
 	}
 	
 	int shaderID;

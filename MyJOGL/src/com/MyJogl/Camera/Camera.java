@@ -27,8 +27,11 @@ public class Camera extends GameObject{
 	}
 
 	public void updateView() {
-		Matrix4f camTransform = new Matrix4f().translationRotateScale(translation, rotation, new Vector3f(scale, scale, scale));
-		view.mul(camTransform.invert());
+		Matrix4f cameraTransform = new Matrix4f().translationRotateScale(translation, rotation, new Vector3f(scale, scale, scale));
+		Logger.writeToLog("Camera Transform:");
+		Logger.writeToLog(cameraTransform.toString());
+		view.setLookAt(new Vector3f(0.0f, 0.0f, -1.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 1.0f, 0.0f))
+		.mul(cameraTransform.invert());
 	}
 	
 }

@@ -87,7 +87,6 @@ public abstract class GameObject implements Serializable {
 	}
 	public void rotate(float[] rot) {
 		rotation.rotate(rot[0], rot[1], rot[2]);
-		System.out.println(rotation.toString());
 	}
 	public void rotate(Quaternionf rot) {
 	}
@@ -121,12 +120,9 @@ public abstract class GameObject implements Serializable {
 	}
 	
 	private Matrix4f calcMVP(Matrix4f vp) {
-		Matrix4f mvp = vp;
+		Matrix4f mvp = new Matrix4f(vp);
 		Matrix4f m = new Matrix4f().translationRotateScale(translation, rotation, new Vector3f(scale, scale, scale));
 		mvp.mul(m);
-		
-		Logger.writeToLog(name + ":");
-		Logger.writeToLog(mvp.toString());
 		
 		return mvp;
 	}

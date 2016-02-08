@@ -3,6 +3,8 @@
 	<name>MyJOGL</name>
 	<comment></comment>
 	<projects>
+		<project>JOGL</project>
+		<project>JOML</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

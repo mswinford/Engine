@@ -47,12 +47,20 @@ public class InputHandler {
 					player.strafeRight();
 				}
 			}
+			else if ( e instanceof MouseEvent) {
+				
+			}
+			
 		} catch (java.lang.NullPointerException ex) {
 			
 		}
 	}
 	
 	public void setAction(Short keyCode, String action) {
+		
+	}
+	
+	public void handleInput() {
 		
 	}
 }
