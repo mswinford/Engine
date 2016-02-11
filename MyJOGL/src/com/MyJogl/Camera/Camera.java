@@ -1,7 +1,6 @@
 package com.MyJogl.Camera;
 
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import com.MyJogl.GameObject.GameObject;
@@ -28,8 +27,7 @@ public class Camera extends GameObject{
 
 	public void updateView() {
 		Matrix4f cameraTransform = new Matrix4f().translationRotateScale(translation, rotation, new Vector3f(scale, scale, scale));
-		Logger.writeToLog("Camera Transform:");
-		Logger.writeToLog(cameraTransform.toString());
+		Logger.writeToLog("Camera Transform:\n" + cameraTransform);
 		view.setLookAt(new Vector3f(0.0f, 0.0f, -1.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 1.0f, 0.0f))
 		.mul(cameraTransform.invert());
 	}

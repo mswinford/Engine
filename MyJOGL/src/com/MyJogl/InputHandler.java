@@ -1,6 +1,6 @@
 package com.MyJogl;
 
-import com.MyJogl.GameObject.PlayerCharacter;
+import com.MyJogl.GameObject.Player;
 import com.jogamp.newt.event.*;
 
 import java.util.HashMap;
@@ -9,9 +9,10 @@ import com.jogamp.newt.event.InputEvent;
 
 public class InputHandler {
 	private HashMap<Short, String> eventToAction;
-	private PlayerCharacter player;
+	private Player player;
 	
-	public InputHandler(PlayerCharacter player) {
+	
+	public InputHandler(Player player) {
 		this.player = player;
 		init();
 	}

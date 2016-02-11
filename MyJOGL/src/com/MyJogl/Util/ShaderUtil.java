@@ -1,4 +1,4 @@
-package com.MyJogl.Utils;
+package com.MyJogl.Util;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import com.MyJogl.Logger.Logger;
 import com.jogamp.opengl.GL2ES2;
 
-public class ShaderUtils {
+public class ShaderUtil {
 	
 	public static int loadShaders(GL2ES2 gl, String vertexShaderPath, String fragmentShaderPath) {	
 		int v = gl.glCreateShader(GL2ES2.GL_VERTEX_SHADER);

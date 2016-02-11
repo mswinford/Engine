@@ -1,23 +1,12 @@
 package com.MyJogl.GameObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import com.MyJogl.Logger.Logger;
-import com.MyJogl.Model.Model;
-import com.jogamp.opengl.GL2;
-
-public abstract class GameObject implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 9168945136392555460L;
+public abstract class GameObject {
 	protected String name;
-	protected Model model;
 	protected float scale;
 	protected Vector3f translation;
 	protected Quaternionf rotation;
@@ -26,17 +15,12 @@ public abstract class GameObject implements Serializable {
 	
 	public GameObject() {
 		name = "";
-		model = null;
 		
 		scale = 1.0f;
 		translation = new Vector3f();
 		rotation = new Quaternionf();
 		
 		components = new ArrayList<GameObject>();
-	}
-	public GameObject(Model model) {
-		this();
-		this.model = model;
 	}
 	public GameObject(String name) {
 		this();
@@ -49,12 +33,6 @@ public abstract class GameObject implements Serializable {
 	}
 	public String getName() {
 		return name;
-	}
-	public void setModel(Model model) {
-		this.model = model;
-	}
-	public Model getModel() {
-		return model;
 	}
 	public void setScale(float scale) {
 		if (scale <= 0.0f) {
@@ -105,25 +83,4 @@ public abstract class GameObject implements Serializable {
 		return null;
 	}
 	
-	public void draw(GL2 gl, Matrix4f vp) {
-		if(model != null)
-			model.draw(gl, calcMVP(vp));
-		else 
-			Logger.writeToLog(name + " has no model");
-		
-		for (GameObject comp : components) {
-			if(comp != null)
-				comp.draw(gl, vp);
-			else 
-				Logger.writeToLog("null component in object: " + name);
-		}
-	}
-	
-	private Matrix4f calcMVP(Matrix4f vp) {
-		Matrix4f mvp = new Matrix4f(vp);
-		Matrix4f m = new Matrix4f().translationRotateScale(translation, rotation, new Vector3f(scale, scale, scale));
-		mvp.mul(m);
-		
-		return mvp;
-	}
 }

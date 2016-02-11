@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JOGL"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JOML"/>
+	<classpathentry kind="lib" path="C:/Users/swinfordm/Downloads/jython-standalone-2.7.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

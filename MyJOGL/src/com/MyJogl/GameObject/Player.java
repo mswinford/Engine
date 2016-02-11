@@ -3,24 +3,14 @@ package com.MyJogl.GameObject;
 import org.joml.Vector3f;
 
 import com.MyJogl.Camera.Camera;
-import com.MyJogl.Model.Model;
 
-public class PlayerCharacter extends Character {
+public class Player extends Character {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 810174614080958148L;
-	
 	private Camera camera;
 	private float moveSpeed = 0.01f;
 
-	public PlayerCharacter(String name) {
+	public Player(String name) {
 		super(name);
-	}
-
-	public PlayerCharacter(Model model) {
-		super(model);
 	}
 
 	public Camera getCamera() {

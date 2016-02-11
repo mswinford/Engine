@@ -6,6 +6,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Logger {
+	/**
+	 * IMPORTANT NOTE:
+	 * Consecutive calls of the writeToLog method are not guaranteed to appear one after the other in the log file.
+	 * This is because of the multi-threaded nature of JOGL.
+	 * To avoid issues, consecutive calls should be concatenated to one string before writing.
+	 * 
+	 * */
+	
 	private static final String DEFAULT_LOG_PATH = "src/Log.txt";
 	
 	private static File logFile;
@@ -27,7 +35,8 @@ public class Logger {
 		}
 	}
 	
-	public static void writeToLog(String line) {		
+	public static synchronized void writeToLog(Object o) {
+		String line = o.toString();
 		try {
 			bw.write(line);
 			bw.newLine();
