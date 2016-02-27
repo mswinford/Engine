@@ -20,13 +20,14 @@ public class InputHandler {
 		eventToAction = new HashMap<Short, String>();
 		
 		eventToAction.put(KeyEvent.VK_W, "moveForward");
-		eventToAction.put(KeyEvent.VK_UP, "moveForward");
+		eventToAction.put(KeyEvent.VK_UP, "moveUp");
 		eventToAction.put(KeyEvent.VK_S, "moveBackward");
-		eventToAction.put(KeyEvent.VK_DOWN, "moveBackward");
+		eventToAction.put(KeyEvent.VK_DOWN, "moveDown");
 		eventToAction.put(KeyEvent.VK_A, "strafeLeft");
-		eventToAction.put(KeyEvent.VK_LEFT, "strafeLeft");
+		eventToAction.put(KeyEvent.VK_LEFT, "lookLeft");
 		eventToAction.put(KeyEvent.VK_D, "strafeRight");
-		eventToAction.put(KeyEvent.VK_RIGHT, "strafeRight");
+		eventToAction.put(KeyEvent.VK_RIGHT, "lookRight");
+		eventToAction.put(MouseEvent.EVENT_MOUSE_DRAGGED, "look");
 	}
 	
 	public void act(InputEvent e) {
@@ -46,9 +47,30 @@ public class InputHandler {
 				if ( action.equals("strafeRight") ) {
 					player.strafeRight();
 				}
+				if ( action.equals("moveUp") ) {
+					player.moveUp();
+				}
+				if ( action.equals("moveDown") ) {
+					player.moveDown();
+				}
+				if ( action.equals("lookLeft") ) {
+					player.lookLeft();
+				}
+				if ( action.equals("lookRight") ) {
+					player.lookRight();
+				}
 			}
 			else if ( e instanceof MouseEvent) {
-				
+				action = eventToAction.get( ((MouseEvent)e).getEventType() );
+				if( action.equals("look") ) {
+					int r = ((MouseEvent)e).getY();
+					if( r > 0 ) {
+						player.lookRight();
+					}
+					if( r < 0 ) {
+						player.lookLeft();
+					}
+				}
 			}
 			
 		} catch (java.lang.NullPointerException ex) {

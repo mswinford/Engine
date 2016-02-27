@@ -8,6 +8,8 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import com.MyJogl.Logger.Logger;
+
+import com.MyJogl.Logger.Logger;
 import com.MyJogl.Model.Model;
 import com.jogamp.opengl.GL2;
 
@@ -105,6 +107,7 @@ public abstract class GameObject implements Serializable {
 		return null;
 	}
 	
+<<<<<<< master
 	public void draw(GL2 gl, Matrix4f vp) {
 		if(model != null)
 			model.draw(gl, calcMVP(vp));
@@ -126,4 +129,22 @@ public abstract class GameObject implements Serializable {
 		
 		return mvp;
 	}
+=======
+	protected Matrix4f calcMVP(Matrix4f vp) {
+		Matrix4f mvp = new Matrix4f(vp);
+		Matrix4f m = new Matrix4f().translationRotateScale( translation, rotation, new Vector3f(scale) );
+		mvp.mul(m);
+//		Logger.writeToLog("Initial VP:\n" + vp);
+//		Logger.writeToLog("Final VP:\n" + vp);
+//		Logger.writeToLog("MVP:\n" + mvp);
+//		Logger.writeToLog("M:\n" + m);
+		
+		return mvp;
+	}
+	
+	public void updateTRS() {
+		
+	}
+	
+>>>>>>> a4246be Big update. Changes to testing. Began Terrain implementation.
 }
