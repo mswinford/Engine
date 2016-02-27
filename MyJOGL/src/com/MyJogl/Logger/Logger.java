@@ -6,8 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Logger {
-<<<<<<< master
-=======
 	/**
 	 * IMPORTANT NOTE:
 	 * Consecutive calls of the writeToLog method are not guaranteed to appear one after the other in the log file.
@@ -16,7 +14,6 @@ public class Logger {
 	 * 
 	 * */
 	
->>>>>>> a4246be Big update. Changes to testing. Began Terrain implementation.
 	private static final String DEFAULT_LOG_PATH = "src/Log.txt";
 	
 	private static File logFile;
@@ -38,12 +35,8 @@ public class Logger {
 		}
 	}
 	
-<<<<<<< master
-	public static void writeToLog(String line) {		
-=======
 	public static void writeToLog(String category, Object o) {
 		String line = o.toString();
->>>>>>> a4246be Big update. Changes to testing. Began Terrain implementation.
 		try {
 			bw.write(category + ": ");
 			bw.write(line);

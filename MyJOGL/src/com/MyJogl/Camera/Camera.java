@@ -38,6 +38,13 @@ public class Camera extends GameObject{
 		.translate(translation)
 		.lookAt(0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f)
 		;
+<<<<<<< master
+=======
+	}
+	
+	public Matrix4f getVP() {
+		return projection.mul(view, new Matrix4f());
+>>>>>>> a4246be Big update. Changes to testing. Began Terrain implementation.
 	}
 	
 	public Matrix4f getVP() {

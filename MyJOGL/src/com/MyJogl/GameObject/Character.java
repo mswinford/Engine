@@ -1,22 +1,16 @@
 package com.MyJogl.GameObject;
 
-<<<<<<< master
-=======
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
->>>>>>> a4246be Big update. Changes to testing. Began Terrain implementation.
 import com.MyJogl.Model.Model;
+import com.jogamp.opengl.GL2;
 
-<<<<<<< master
-public class Character extends GameObject {
-=======
 public class Character extends GameObject implements Renderable, Movable {
 	
 	protected Model model;
 	protected boolean transparent;
 	protected float speed;
->>>>>>> a4246be Big update. Changes to testing. Began Terrain implementation.
 	
 	public Character(String name, Model model) {
 		super(name);
@@ -32,18 +26,11 @@ public class Character extends GameObject implements Renderable, Movable {
 	public Character() {
 		this("", null);
 	}
-<<<<<<< master
-	public Character(Model model){
-		super(model);
-=======
 	
 	@Override
 	public void move(Vector3f move) {
 		this.translate(move);
->>>>>>> a4246be Big update. Changes to testing. Began Terrain implementation.
 	}
-<<<<<<< master
-=======
 	
 	@Override
 	public void draw(GL2 gl, Matrix4f vp) {
@@ -88,5 +75,4 @@ public class Character extends GameObject implements Renderable, Movable {
 		return speed;		
 	}
 	
->>>>>>> a4246be Big update. Changes to testing. Began Terrain implementation.
 }
