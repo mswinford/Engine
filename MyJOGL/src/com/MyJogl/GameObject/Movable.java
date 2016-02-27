@@ -1,7 +1,9 @@
 package com.MyJogl.GameObject;
 
-public interface Movable {
-	public float speed = 0.0f;
-	
-	public void move();
+import org.joml.Vector3f;
+
+public interface Movable {	
+	public void move(Vector3f move);
+	public void setSpeed(float speed);
+	public float getSpeed();
 }

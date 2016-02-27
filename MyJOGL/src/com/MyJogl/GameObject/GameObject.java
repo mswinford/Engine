@@ -2,8 +2,11 @@ package com.MyJogl.GameObject;
 
 import java.util.ArrayList;
 
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
+import com.MyJogl.Logger.Logger;
 
 public abstract class GameObject {
 	protected String name;
@@ -81,6 +84,22 @@ public abstract class GameObject {
 		}
 		
 		return null;
+	}
+	
+	protected Matrix4f calcMVP(Matrix4f vp) {
+		Matrix4f mvp = new Matrix4f(vp);
+		Matrix4f m = new Matrix4f().translationRotateScale( translation, rotation, new Vector3f(scale) );
+		mvp.mul(m);
+//		Logger.writeToLog("Initial VP:\n" + vp);
+//		Logger.writeToLog("Final VP:\n" + vp);
+//		Logger.writeToLog("MVP:\n" + mvp);
+//		Logger.writeToLog("M:\n" + m);
+		
+		return mvp;
+	}
+	
+	public void updateTRS() {
+		
 	}
 	
 }

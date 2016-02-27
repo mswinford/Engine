@@ -12,7 +12,7 @@ public class FreeFlyCamera extends Camera {
 	public FreeFlyCamera(float moveSpeed) {
 		super();
 		this.moveSpeed = moveSpeed;
-		this.view.lookAt(new Vector3f(0.0f, 0.0f, -1.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 1.0f, 0.0f));
+		this.view.identity();
 	}	
 
 }

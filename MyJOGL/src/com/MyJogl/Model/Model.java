@@ -1,6 +1,5 @@
 package com.MyJogl.Model;
 
-import java.io.Serializable;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -11,111 +10,32 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
-public class Model implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 834637561341814527L;
-	private FloatBuffer fb; // will be removed after obj loading is completed
-	
+public class Model {
 	//fields needed to draw the model. These are obtained from the loadObj method.
-	private IntBuffer bufferIDs; //buffer to store the model's OpenGL IDs from 0 to 3 it goes: vertex data, uv data, normal data, indices
+	protected int[] buffers; //buffer to store the model's VAO, VBO, and EBO in that order
 	
+	protected int shaderID;
+	protected int matrixID;
+	protected String modelPath;
+	protected RenderMode mode;
 	
-	private int matrixID;
-	private String modelPath;
-	private RenderMode mode;
-	
-	private String name;
-	
-	private float[] pyramid = {
-			-1, -1, -1,
- 			 1, -1, -1,
- 			 0,  1,  0,
- 			 1, -1, -1,
- 			 1, -1,  1,
- 			 0,  1,  0,
- 			 1, -1,  1,
- 			-1, -1,  1,
- 			 0,  1,  0,
- 			-1, -1,  1,
- 			-1, -1, -1,
- 			 0,  1,  0,
- 			-1, -1, -1,
- 			 1, -1, -1,
- 			 1, -1,  1,
- 			 1, -1,  1,
- 			-1, -1,  1,
- 			-1, -1, -1
- 			};
-	
-	private float[] pyramidColors = {
-		1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f
-	};
-	
-	private float[] cube = {
-		      -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-		      -1.0f,-1.0f, 1.0f,
-		      -1.0f, 1.0f, 1.0f, // triangle 1 : end
-		      1.0f, 1.0f,-1.0f, // triangle 2 : begin
-		      -1.0f,-1.0f,-1.0f,
-		      -1.0f, 1.0f,-1.0f, // triangle 2 : end
-		     1.0f,-1.0f, 1.0f,
-		     -1.0f,-1.0f,-1.0f,
-		     1.0f,-1.0f,-1.0f,
-		     1.0f, 1.0f,-1.0f,
-		     1.0f,-1.0f,-1.0f,
-		     -1.0f,-1.0f,-1.0f,
-		     -1.0f,-1.0f,-1.0f,
-		     -1.0f, 1.0f, 1.0f,
-		     -1.0f, 1.0f,-1.0f,
-		     1.0f,-1.0f, 1.0f,
-		     -1.0f,-1.0f, 1.0f,
-		     -1.0f,-1.0f,-1.0f,
-		     -1.0f, 1.0f, 1.0f,
-		     -1.0f,-1.0f, 1.0f,
-		     1.0f,-1.0f, 1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     1.0f,-1.0f,-1.0f,
-		     1.0f, 1.0f,-1.0f,
-		     1.0f,-1.0f,-1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     1.0f,-1.0f, 1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     1.0f, 1.0f,-1.0f,
-		     -1.0f, 1.0f,-1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     -1.0f, 1.0f,-1.0f,
-		     -1.0f, 1.0f, 1.0f,
-		     1.0f, 1.0f, 1.0f,
-		     -1.0f, 1.0f, 1.0f,
-		     1.0f,-1.0f, 1.0f
-		 };
+	protected String name;
+	protected int numIndices;
 	
 	public Model() {
+		mode = RenderMode.NORMAL;
+		buffers = new int[3];
 	}
 	
 	public void setShaderID(int shaderID) {
+		this.shaderID = shaderID;
 	}
 	public void setMatrixID(int matrixID) {
 		this.matrixID = matrixID;
+	}
+	
+	public void load(GL2 gl) {
+		numIndices = Util.loadObj(gl, "src/assets/models/pyramid.obj", buffers);
 	}
 	
 	public void draw(GL2 gl, Matrix4f mvp) {		
@@ -127,45 +47,19 @@ public class Model implements Serializable{
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_LINE);
 		}
 		
-		
-		//keep everything after this
+		//complete the calculation of the MVP matrix and pass it to the OpenGL uniform
 		FloatBuffer mvpBuf = Buffers.newDirectFloatBuffer(16);
 		mvp.get(mvpBuf);
 		gl.glUniformMatrix4fv(matrixID, 1, false, mvpBuf);
 		
+		//set the shader
+		gl.glUseProgram(shaderID);
 		
-		gl.glEnableVertexAttribArray(0);
-		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, bufferIDs.get(0));
-		gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 0, 0);
-		
-		gl.glEnableVertexAttribArray(1);
-		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, bufferIDs.get(1));
-		gl.glVertexAttribPointer(1, 3, GL.GL_FLOAT, false, 0, 0);
-		
-		gl.glDrawArrays(GL.GL_TRIANGLES, 0, 18);
-		gl.glDisableVertexAttribArray(0);
-		gl.glDisableVertexAttribArray(1);
-	}
-	
-	public void load(GL gl) {
-		mode = RenderMode.NORMAL;
-		bufferIDs = Buffers.newDirectIntBuffer(4);
-		
-		Util.loadObj(gl, "src/assets/models/pyramid.obj", bufferIDs);
-		
-		
-		
-		fb = Buffers.newDirectFloatBuffer(pyramidColors);
-		
-		gl.glGenBuffers(1, bufferIDs);
-		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, bufferIDs.get(1));
-		gl.glBufferData(GL.GL_ARRAY_BUFFER, fb.capacity()*Buffers.SIZEOF_FLOAT, fb, GL.GL_STATIC_DRAW);
-		
-	}
-	
-	private enum RenderMode {
-		NORMAL,
-		WIREFRAME,
+		//draw the model
+		gl.glBindVertexArray(buffers[0]);
+		gl.glDrawArrays(GL.GL_TRIANGLES, 0, numIndices);
+		//gl.glDrawElements(GL.GL_TRIANGLES, numIndices, GL.GL_UNSIGNED_INT, 0);
+		gl.glBindVertexArray(0);		
 	}
 
 	public String getModelPath() {
@@ -174,5 +68,9 @@ public class Model implements Serializable{
 
 	public String getName() {
 		return name;
+	}
+	
+	public void setRenderMode(RenderMode mode) {
+		this.mode = mode;
 	}
 }

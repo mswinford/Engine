@@ -5,11 +5,18 @@ import org.joml.Vector3f;
 
 import com.MyJogl.Camera.Camera;
 import com.MyJogl.Camera.FreeFlyCamera;
+import com.MyJogl.Debug.ThreadDebug;
+import com.MyJogl.GameConsole.GameConsole;
 import com.MyJogl.GameObject.Character;
+import com.MyJogl.GameObject.GameObject;
 import com.MyJogl.GameObject.Player;
+import com.MyJogl.GameObject.Terrain;
 import com.MyJogl.Logger.Logger;
 import com.MyJogl.Model.Model;
+import com.MyJogl.Model.RenderMode;
+import com.MyJogl.Model.TerrainModel;
 import com.MyJogl.Util.ShaderUtil;
+import com.MyJogl.test.TestModel;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.WindowAdapter;
@@ -20,18 +27,24 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.util.Animator;
+import com.sun.java.swing.plaf.windows.resources.windows;
+import com.sun.org.apache.xml.internal.resolver.helpers.Debug;
 
 
 
-public class Game implements GLEventListener, Runnable {
+public class Game implements GLEventListener, Runnable {	
+	private String name;
 	private volatile boolean isRunning = false;
 	private Animator animator;
+	private GLWindow window;
 	private SceneManager sceneManager;
-	private Camera camera;
+	private Camera activeCamera;
 	
-	private long dt = 0;
+	private float dt = 0;
 	
 	private Matrix4f projection;
+	
+	private GameConsole console;
 	
 	//indefinite global variables
 	private Player player;
@@ -39,37 +52,40 @@ public class Game implements GLEventListener, Runnable {
 	
 	
 	public static void main(String[] args) {
-		new Thread(Game.createGame()).run();
+		Thread gameThread = new Thread(Game.createGame("Test Game"));
+		gameThread.run();
     }
 	
-	private Game() {
+	private Game(String name) {
+		this.name = name;
 		Logger.initilalizeLogger();
 		Config.initialize();
 		sceneManager = new SceneManager();
-		camera = new Camera();
-		camera.getView().setLookAt(new Vector3f(0.0f, 0.0f, -1.0f), new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 1.0f, 0.0f));
-		projection = new Matrix4f().setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar);
-		
-		player = new Player("Player");
-		player.setCamera(new FreeFlyCamera(0.01f));
-		input = new InputHandler(player);
+		console = new GameConsole();
 	}
 	
-	public static Game createGame() {
-		return new Game();
+	public static Game createGame(String name) {
+		return new Game(name);
 	}
 	
 	public void run() {
-		final GLWindow window = GLWindow.create(Config.caps);
-		animator = new Animator();
-		animator.setUpdateFPSFrames(5, null);
+		window = GLWindow.create(Config.caps);
+		window.setAutoSwapBufferMode(false); //disable the automatic excution of swapBuffers for double buffering. must call swapBuffers manually after each render call.
 		
 		window.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowDestroyNotify(WindowEvent e) {
-				window.getAnimator().stop();
-				window.lockSurface();
 				stop();
+			}
+			
+			@Override
+			public void windowLostFocus(WindowEvent e) {
+				pause();
+			}
+			
+			@Override
+			public void windowGainedFocus(WindowEvent e) {
+				resume();
 			}
 		});
 		
@@ -85,13 +101,13 @@ public class Game implements GLEventListener, Runnable {
 			public void keyPressed(KeyEvent e) {
 				input.act(e);
 				if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-					window.getAnimator().stop();
 					stop();
 				}
 			}
 		});
 		
-		animator.add(window);
+		animator = new Animator(window);
+		animator.setUpdateFPSFrames(5, null);
 		animator.start();
         window.addGLEventListener(this);
         window.setPosition(500, 500);
@@ -102,9 +118,21 @@ public class Game implements GLEventListener, Runnable {
 	}
 	
 	public void stop() {
+		ThreadDebug.printAllThreads();
+		window.getAnimator().stop();
+		window.lockSurface();
 		isRunning = false;
+		Logger.writeToLog("Active Threads: ");
 		Logger.writeToLog("Game Stopped");
 		Logger.dispose();
+	}
+	
+	public void pause() {
+		this.animator.pause();
+	}
+	
+	public void resume() {
+		this.animator.resume();
 	}
 	
 	public boolean isRunning() {
@@ -117,19 +145,28 @@ public class Game implements GLEventListener, Runnable {
 		int vsync = Config.vsync ? 1 : 0;
 		drawable.getGL().setSwapInterval(vsync);
 		
-		
+		projection = new Matrix4f().setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar);
+
+		//this will move later when dynamic shader loading is implemented
 		shaderID = ShaderUtil.loadShaders(drawable.getGL().getGL4(), "src/assets/shaders/vertex.vp", "src/assets/shaders/fragment.fp");
+		shaderID2 = ShaderUtil.loadShaders(drawable.getGL().getGL4(), "src/assets/shaders/vertex.vp", "src/assets/shaders/fragment2.fp");
+		terrainShaderID = ShaderUtil.loadShaders(drawable.getGL().getGL4(), "src/assets/shaders/TerrainVertex.vp", "src/assets/shaders/TerrainFragment.fp");
 		
 		GL2 gl = drawable.getGL().getGL2();
 		
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL.GL_LESS);
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
-		
+//		gl.glCullFace(GL.GL_CCW);
+//		gl.glEnable(GL.GL_CULL_FACE);
 		
 		//below is for testing	
 		intializeTestScene(gl);
 		
+		player = new Player("Player");
+		player.setCamera(new FreeFlyCamera(0.1f));
+		player.getCamera().setProjection( projection );
+		input = new InputHandler(player);
 
 		//sceneManager.saveScene();
 	}
@@ -141,8 +178,9 @@ public class Game implements GLEventListener, Runnable {
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		dt = animator.getLastFPSPeriod();
-		System.out.println((int)animator.getLastFPS());
+		dt = (float)((double)animator.getLastFPSPeriod() / 1000.0D);
+		System.out.println(dt);
+		console.setFPS(animator.getLastFPS());
 		update();
 		render(drawable);
 	}
@@ -154,6 +192,8 @@ public class Game implements GLEventListener, Runnable {
 		Config.aspectRatio = ((float)width)/((float)height);
 		projection.setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar);
 		
+		//testing
+		player.getCamera().setProjection(projection);
 	}
 	
 	
@@ -162,8 +202,8 @@ public class Game implements GLEventListener, Runnable {
 //		long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
 //		Logger.writeToLog("MB used: " + usedMB);
 		
-		character.setScale(character.getScale() + scaleTheta);
-		character.translate(deltaXYZ);
+		character.setScale(character.getScale() + (scaleTheta * dt));
+		character.translate(deltaXYZ.mul(dt, new Vector3f()));
 		character.rotate(rot);
 	}
 	
@@ -171,11 +211,12 @@ public class Game implements GLEventListener, Runnable {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		
-		gl.glUseProgram(shaderID);
+		Matrix4f vp = player.getCamera().getVP();
 		
 		//below is for testing		
-		Matrix4f vp = new Matrix4f().set(projection).mul(player.getCamera().getView());
 		sceneManager.drawScene(gl, vp);
+		drawable.swapBuffers();
+		gl.glFlush();
 	}
 	
 	
@@ -184,11 +225,12 @@ public class Game implements GLEventListener, Runnable {
 	
 	
 	
-	int shaderID;
+	int shaderID, shaderID2, terrainShaderID;
 	float scaleTheta = 0.0f;
-	Vector3f deltaXYZ = new Vector3f(0.0f, 0.0f, 0.0f);
+	Vector3f deltaXYZ = new Vector3f(0.01f, 0.0f, 0.0f);
 	float[] rot = {0.0f, 0.0f, 0.0f};
 	Model model = new Model();
+	Model model2 = new Model();
 	Character character = new Character("Test Character");
 	Scene scene = new Scene("Test Scene");
 		
@@ -199,50 +241,55 @@ public class Game implements GLEventListener, Runnable {
 		model.setShaderID(shaderID);
 		model.setMatrixID(gl.glGetUniformLocation(shaderID, "MVP"));
 		
+		model2.load(gl);
+		model2.setShaderID(shaderID2);
+		model2.setMatrixID(gl.glGetUniformLocation(shaderID2, "MVP"));
+		
 		character.setModel(model);
 		character.setScale(0.25f);
 		Character c1 = new Character("");
 		c1.setModel(model);
 		c1.setName("c1");
-		c1.setScale(0.25f);
-		//c1.translate(new Vector3f(-0.5f, 0.5f, 0.0f));
+		c1.setScale(0.1f);
+//		c1.translate(new Vector3f(0.0f, 0.0f, 0.0f));
 		Character c2 = new Character("");
+		c2.setModel(model2);
+		c2.setTransparent(true);
 		c2.setName("c2");
-		c2.setScale(0.25f);
-		c2.translate(new Vector3f(0.5f, 0.5f, 0.0f));
+		c2.setScale(0.1f);
+		c2.translate(new Vector3f(1.6f, 0.5f, -2.0f));
 		Character c3 = new Character("");
+		c3.setModel(model);
 		c3.setName("c3");
-		c3.setScale(0.25f);
-		c3.translate(new Vector3f(0.5f, -0.5f, 0.0f));
+		c3.setScale(0.1f);
+		c3.translate(new Vector3f(-1.8f, 1.0f, -0.5f));
 		Character c4 = new Character("");
+		c4.setModel(model2);
 		c4.setName("c4");
-		c4.setScale(0.25f);
-		c4.translate(new Vector3f(-0.5f, -0.5f, 0.0f));
+		c4.setScale(0.1f);
+		c4.translate(new Vector3f(0.2f, -1.0f, -5.0f));
 		scene.add(c1);
 //		scene.add(c2);
 //		scene.add(c3);
 //		scene.add(c4);
 //		scene.add(character);
 		
-		//create lots of triangles (10,000) to test limits
-//		float x = -1.0f;
-//		float y = 1.0f;
-//		for(int i=0; i<10; i++) {
-//			for(int j=0; j<10; j++) {
-//				Character c = new Character(model);
-//				c.setScale(0.25f);
-//				c.translate(new Vector3f(x, y, 0.0f));
-//				scene.add(c);
-//				x += 0.5f;
-//			}
-//			y -= 0.5f;
-//			x = -1.0f;
-//		}
+		TestModel test = new TestModel();
+		test.load(gl);
+		test.setShaderID(shaderID);
+		test.setMatrixID(gl.glGetUniformLocation(shaderID, "MVP"));
+		c1.setModel(test);
+		
+		Terrain t = new Terrain(2);
+		TerrainModel tm = new TerrainModel();
+		t.load(gl, "src/assets/mountains512.png");
+		t.getModel().setShaderID(terrainShaderID);
+		t.getModel().setMatrixID(gl.glGetUniformLocation(terrainShaderID, "MVP"));
+//		scene.add(t);
 		
 		scene.add(player);
+		
 		sceneManager.setScene(scene);
-		
-		
 		
 		
 	}

@@ -41,7 +41,7 @@ public class Scene extends GameObject {
 				((Renderable)object).draw(gl, vp);
 			}
 			else { 
-				Logger.writeToLog("null object in scene: " + sceneName);
+//				Logger.writeToLog("null object in scene: " + sceneName);
 			}
 		}
 	}

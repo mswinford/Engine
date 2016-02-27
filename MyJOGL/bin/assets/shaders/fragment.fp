@@ -1,9 +1,13 @@
 #version 330
 
-in vec3 vColor;
+in vec2 uv;
+in vec3 normal;
 
-out vec3 color;
+out vec4 color;
 
 void main(){
-	color = vColor;
+	vec3 tmpColor = vec3(uv.rg, 0.0) + normal;
+	vec3 light = vec3(0.25, 0.0, 0.25);
+	float cosTheta = 0.5; //clamp( dot( n,l ), 0,1 );
+	color = vec4(tmpColor, 1.0) * cosTheta;
 }

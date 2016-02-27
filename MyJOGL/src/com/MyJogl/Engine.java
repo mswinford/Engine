@@ -20,6 +20,8 @@ public class Engine implements GLEventListener {
 	private GLCanvas canvas;
 	
 	private Game game;
+	private Thread gameThread;
+	private String gameName;
 	
 	public Engine() {		
 		canvas = new GLCanvas();
@@ -57,8 +59,8 @@ public class Engine implements GLEventListener {
 			
 			@Override
 			public void windowClosing(java.awt.event.WindowEvent e) {
+				window.dispose();
 				System.exit(0);
-				
 			}
 			
 			@Override
@@ -81,6 +83,7 @@ public class Engine implements GLEventListener {
 	}	
 
 	private void initialize() {
+		//top menu bar
 		MenuBar menuBar = new MenuBar();
 		Menu menu = new Menu("File");
 		MenuItem item1 = new MenuItem("Run...");
@@ -91,9 +94,30 @@ public class Engine implements GLEventListener {
 			}
 		});
 		menu.add(item1);
+		
+		MenuItem item2 = new MenuItem("Pause");
+		item2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				pauseGame();
+			}
+		});
+		menu.add(item2);
+		
+		MenuItem item3 = new MenuItem("Play");
+		item3.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				resumeGame();
+			}
+		});
+		menu.add(item3);
+		
 		menuBar.add(menu);
 		window.setMenuBar(menuBar);
 		
+		
+		//ui buttons
 		JButton runButton = new JButton("Run...");
 		runButton.setSize(new Dimension(30, 20));
 		runButton.addActionListener(new ActionListener() {
@@ -114,11 +138,20 @@ public class Engine implements GLEventListener {
 
 	public void runGame(){
 		if (game != null && game.isRunning()) {
-			System.out.println("Game is alreadyRunning");
+			System.out.println("Game is already running");
 			return;
 		}
-		Game.createGame();
-		//(new Thread(game)).run();
+		game = Game.createGame(gameName);
+		gameThread = new Thread(game);
+		gameThread.run();
+	}
+	
+	public void pauseGame() {
+		game.pause();
+	}
+	
+	public void resumeGame() {
+		game.resume();
 	}
 	
 	@Override
@@ -128,8 +161,9 @@ public class Engine implements GLEventListener {
 
 	@Override
 	public void dispose(GLAutoDrawable drawable) {
-		// TODO Auto-generated method stub
-		
+		//shutdown the game instance if it exists and is running
+		if( game != null )
+			game.stop();
 	}
 
 	@Override

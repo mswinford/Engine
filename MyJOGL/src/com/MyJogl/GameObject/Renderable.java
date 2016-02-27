@@ -9,4 +9,6 @@ public interface Renderable {
 	public void setModel(Model model);
 	public Model getModel();
 	public void draw(GL2 gl, Matrix4f vp);
+	public boolean isTransparent();
+	public void setTransparent(boolean trans);
 }

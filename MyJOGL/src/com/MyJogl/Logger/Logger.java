@@ -10,7 +10,7 @@ public class Logger {
 	 * IMPORTANT NOTE:
 	 * Consecutive calls of the writeToLog method are not guaranteed to appear one after the other in the log file.
 	 * This is because of the multi-threaded nature of JOGL.
-	 * To avoid issues, consecutive calls should be concatenated to one string before writing.
+	 * To avoid issues, consecutive calls should be concatenated to one string before writing, preferably using a StringBuffer for long messages.
 	 * 
 	 * */
 	
@@ -35,9 +35,10 @@ public class Logger {
 		}
 	}
 	
-	public static synchronized void writeToLog(Object o) {
+	public static void writeToLog(String category, Object o) {
 		String line = o.toString();
 		try {
+			bw.write(category + ": ");
 			bw.write(line);
 			bw.newLine();
 			bw.flush();
@@ -61,10 +62,8 @@ public class Logger {
 		}
 	}
 	
-	private enum Level {
-		SEVERE,
-		WARNING,
-		INFO,
+	public static void writeToLog(Object o) {
+		writeToLog("Info", o);
 	}
 	
 	
