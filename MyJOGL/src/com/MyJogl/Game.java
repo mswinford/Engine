@@ -6,7 +6,6 @@ import org.joml.Vector3f;
 import com.MyJogl.Camera.Camera;
 import com.MyJogl.Camera.FreeFlyCamera;
 import com.MyJogl.GameObject.Character;
-import com.MyJogl.GameObject.GameObject;
 import com.MyJogl.GameObject.PlayerCharacter;
 import com.MyJogl.Logger.Logger;
 import com.MyJogl.Model.Model;
