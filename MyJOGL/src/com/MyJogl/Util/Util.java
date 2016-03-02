@@ -1,28 +1,31 @@
-package com.MyJogl.Utils;
+package com.MyJogl.Util;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
 
-import com.MyJogl.Logger.Logger;
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL2ES2;
+import com.jogamp.opengl.math.Matrix4;
 
-public class ShaderUtils {
-	
-	public static int loadShaders(GL2ES2 gl, String vertexShaderPath, String fragmentShaderPath) {	
+public class Util {
+
+	public static int loadShaders(GL2ES2 gl, String vertexShaderPath, String fragmentShaderPath) {
 		int v = gl.glCreateShader(GL2ES2.GL_VERTEX_SHADER);
 		int f = gl.glCreateShader(GL2ES2.GL_FRAGMENT_SHADER);
 		
 		int[] results = new int[2];
 		
 		//read and compile the vertex shader
-		Logger.writeToLog("Loading Shader: " + vertexShaderPath);
 		BufferedReader brv = null;
 		try {
 			brv = new BufferedReader(new FileReader(vertexShaderPath));
 		} catch (FileNotFoundException e) {
-			Logger.writeToLog("Faild to open vertex shader: " + vertexShaderPath);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		String[] vsrc = { "" };
 		int[] vlength = new int[1];
@@ -31,14 +34,11 @@ public class ShaderUtils {
 			while ((line=brv.readLine()) != null) {
 			  vsrc[0] += (line + "\n");
 			}
+			System.out.println(vsrc[0]);
+			brv.close();
 		} catch (IOException e) {
-			Logger.writeToLog("Failed to read lines from vertex shader file: " + vertexShaderPath);
-		} finally {
-			try {
-				brv.close();
-			} catch (IOException e) {
-				Logger.writeToLog("Couldn't close vertex shader: " + vertexShaderPath);
-			}
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		vlength[0] = vsrc[0].length();
 		gl.glShaderSource(v, 1, vsrc, vlength, 0);
@@ -49,20 +49,18 @@ public class ShaderUtils {
 		if (results[1] > 0) {
 			byte[] log = new byte[results[1]];
 			gl.glGetShaderInfoLog(v, results[1], results, 1, log, 0);
-			line = "";
 			for (int i=0; i<results[1]; i++) {
-				line += (char)log[i];
+				System.out.print((char)log[i]);
 			}
-			Logger.writeToLog(line);
 		}
 		
 		//read and compile the fragment shader
-		Logger.writeToLog("Loading Shader: " + fragmentShaderPath);
 		BufferedReader brf = null;
 		try {
 			brf = new BufferedReader(new FileReader(fragmentShaderPath));
 		} catch (FileNotFoundException e) {
-			Logger.writeToLog("Faild to open fragment shader: " + fragmentShaderPath);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		String[] fsrc = { "" };
 		int[] flength = new int[1];
@@ -71,15 +69,11 @@ public class ShaderUtils {
 			while ((line=brf.readLine()) != null) {
 			  fsrc[0] += (line + "\n");
 			}
+			brf.close();
 		} catch (IOException e) {
-			Logger.writeToLog("Failed to read lines from fragment shader file: " + fragmentShaderPath);
-		} finally {
-			try {
-				brf.close();
-			} catch (IOException e) {
-				Logger.writeToLog("Couldn't close fragment shader: " + fragmentShaderPath);
-			}
-		}
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 		flength[0] = fsrc[0].length();
 		gl.glShaderSource(f, 1, fsrc, flength, 0);
 		gl.glCompileShader(f);
@@ -89,11 +83,9 @@ public class ShaderUtils {
 		if (results[1] > 0) {
 			byte[] log = new byte[results[1]];
 			gl.glGetShaderInfoLog(f, results[1], results, 1, log, 0);
-			line = "";
 			for (int i=0; i<results[1]; i++) {
-				line += (char)log[i];
+				System.out.print((char)log[i]);
 			}
-			Logger.writeToLog(line);
 		}
 
 		
@@ -122,6 +114,10 @@ public class ShaderUtils {
 		gl.glDeleteShader(f);
 		
 		return shaderProgramID;
+	}
+
+	public static void saveScene () {
+		
 	}
 	
 }

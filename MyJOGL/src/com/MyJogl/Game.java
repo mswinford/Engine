@@ -6,10 +6,12 @@ import org.joml.Vector3f;
 import com.MyJogl.Camera.Camera;
 import com.MyJogl.Camera.FreeFlyCamera;
 import com.MyJogl.GameObject.Character;
+import com.MyJogl.GameObject.GameObject;
 import com.MyJogl.GameObject.PlayerCharacter;
 import com.MyJogl.Logger.Logger;
 import com.MyJogl.Model.Model;
-import com.MyJogl.Utils.ShaderUtils;
+import com.MyJogl.Util.Util;
+import com.MyJogl.Util.Util.ShaderUtils;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.WindowAdapter;
@@ -19,14 +21,14 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.FPSAnimator;
-import com.sun.java.swing.plaf.windows.resources.windows;
 
 
 
 public class Game implements GLEventListener, Runnable {
 	private volatile boolean isRunning = false;
-	private FPSAnimator animator;
+	private Animator animator;
 	private SceneManager sceneManager;
 	private Camera camera;
 	
@@ -37,6 +39,12 @@ public class Game implements GLEventListener, Runnable {
 	//indefinite global variables
 	private PlayerCharacter player;
 	private InputHandler input;
+	
+	public static void main(String[] args) {
+		Thread gameThread = new Thread(new Game());
+		gameThread.setName("Game Thread");
+		gameThread.run();
+    }
 	
 	public Game() {
 		Logger.initilalizeLogger();
@@ -53,7 +61,7 @@ public class Game implements GLEventListener, Runnable {
 	
 	public void run() {
 		final GLWindow window = GLWindow.create(Config.caps);
-		animator = new FPSAnimator(window, 60, Config.vsync);
+		animator = new Animator();
 		animator.setUpdateFPSFrames(5, null);
 		
 		window.addWindowListener(new WindowAdapter() {
@@ -83,7 +91,7 @@ public class Game implements GLEventListener, Runnable {
 			}
 		});
 		
-		window.setAnimator(animator);
+		animator.add(window);
 		animator.start();
         window.addGLEventListener(this);
         window.setPosition(500, 500);
@@ -102,14 +110,13 @@ public class Game implements GLEventListener, Runnable {
 	public boolean isRunning() {
 		return isRunning;
 	}
-	
-	public static void main(String[] args) {
-		new Thread(new Game()).run();
-    }
 
 	@Override
-	public void init(GLAutoDrawable drawable) {			
-		shaderID = ShaderUtils.loadShaders(drawable.getGL().getGL4(), "src/vertex.vp", "src/fragment.fp");
+	public void init(GLAutoDrawable drawable) {
+		int vsync = Config.vsync ? 1 : 0;
+		drawable.getGL().setSwapInterval(vsync);
+		
+		shaderID = Util.loadShaders(drawable.getGL().getGL4(), "src/vertex.vp", "src/fragment.fp");
 		
 		GL2 gl = drawable.getGL().getGL2();
 		
@@ -118,7 +125,9 @@ public class Game implements GLEventListener, Runnable {
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
 		
 		
-		//below is for testing			
+		//below is for testing		
+		//sceneManager.loadScene("TestScene");
+		
 		Logger.writeToLog("initializing test scene");
 		model.init(gl);
 		model.setShaderID(shaderID);
@@ -141,16 +150,19 @@ public class Game implements GLEventListener, Runnable {
 		c4.setName("c4");
 		c4.setScale(0.25f);
 		c4.translate(new Vector3f(-0.5f, -0.5f, 0.0f));
-		scene.add(c1);
-		scene.add(c2);
-		scene.add(c3);
-		scene.add(c4);
-		scene.add(character);
-		scene.add(player);
-		sceneManager.setScene(scene);
+//		scene.add(c1);
+//		scene.add(c2);
+//		scene.add(c3);
+//		scene.add(c4);
+//		scene.add(character);
+//		scene.add(player);
 		
+//		sceneManager.loadScene("Test Scene");
+//		GameObject test = scene.getComponent("Test Character");
+//		System.out.println(test);
+		scene.add(new Character("Test Character"));
 
-		//sceneManager.saveScene();
+		sceneManager.saveScene();
 	}
 
 	@Override
