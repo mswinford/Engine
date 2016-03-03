@@ -47,13 +47,13 @@ public class Model {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_LINE);
 		}
 		
+		//set the shader
+		gl.glUseProgram(shaderID);
+		
 		//complete the calculation of the MVP matrix and pass it to the OpenGL uniform
 		FloatBuffer mvpBuf = Buffers.newDirectFloatBuffer(16);
 		mvp.get(mvpBuf);
 		gl.glUniformMatrix4fv(matrixID, 1, false, mvpBuf);
-		
-		//set the shader
-		gl.glUseProgram(shaderID);
 		
 		//draw the model
 		gl.glBindVertexArray(buffers[0]);

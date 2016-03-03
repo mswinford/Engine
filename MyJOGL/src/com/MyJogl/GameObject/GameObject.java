@@ -10,7 +10,7 @@ import com.MyJogl.Logger.Logger;
 
 public abstract class GameObject {
 	protected String name;
-	protected float scale;
+	protected Vector3f scale;
 	protected Vector3f translation;
 	protected Quaternionf rotation;
 	protected ArrayList<GameObject> components;
@@ -19,7 +19,7 @@ public abstract class GameObject {
 	public GameObject() {
 		name = "";
 		
-		scale = 1.0f;
+		scale = new Vector3f(1.0f);
 		translation = new Vector3f();
 		rotation = new Quaternionf();
 		
@@ -37,14 +37,23 @@ public abstract class GameObject {
 	public String getName() {
 		return name;
 	}
-	public void setScale(float scale) {
-		if (scale <= 0.0f) {
-			System.out.println("Scale cannot be 0 or lower");
+	public void setScale(Vector3f scale) {
+		if( scale.x <= 0.0f ) {
+			System.out.println("X scale is 0 or lower");
 			return;
 		}
+		if( scale.y <= 0.0f ) {
+			System.out.println("Y scale is 0 or lower");
+			return;
+		}
+		if( scale.z <= 0.0f ) {
+			System.out.println("Z scale is 0 or lower");
+			return;
+		}
+		
 		this.scale = scale;
 	}
-	public float getScale() {
+	public Vector3f getScale() {
 		return scale;
 	}
 	public void setTranslation(Vector3f trans) {
@@ -61,7 +70,10 @@ public abstract class GameObject {
 	}
 	
 	public void scale(float scale) {
-		this.scale *= scale;
+		this.scale.mul(scale);
+	}
+	public void scale(Vector3f scale) {
+		this.scale.mul(scale);
 	}
 	public void translate(Vector3f trans) {
 		translation.add(trans);

@@ -36,7 +36,6 @@ public class Game implements GLEventListener, Runnable {
 	private Animator animator;
 	private GLWindow window;
 	private SceneManager sceneManager;
-	private Camera activeCamera;
 	
 	private float dt = 0;
 	
@@ -200,9 +199,9 @@ public class Game implements GLEventListener, Runnable {
 //		long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
 //		Logger.writeToLog("MB used: " + usedMB);
 		
-		character.setScale(character.getScale() + (scaleTheta * dt));
-		character.translate(deltaXYZ.mul(dt, new Vector3f()));
-		character.rotate(rot);
+//		character.setScale(character.getScale() + (scaleTheta * dt));
+//		character.translate(deltaXYZ.mul(dt, new Vector3f()));
+//		character.rotate(rot);
 	}
 	
 	private void render(GLAutoDrawable drawable) {		
@@ -213,6 +212,7 @@ public class Game implements GLEventListener, Runnable {
 		
 		//below is for testing		
 		sceneManager.drawScene(gl, vp);
+		
 		drawable.swapBuffers();
 		gl.glFlush();
 	}
@@ -243,47 +243,45 @@ public class Game implements GLEventListener, Runnable {
 		model2.setShaderID(shaderID2);
 		model2.setMatrixID(gl.glGetUniformLocation(shaderID2, "MVP"));
 		
-		character.setModel(model);
-		character.setScale(0.25f);
+//		character.setModel(model);
+//		character.setScale(0.25f);
 		Character c1 = new Character("");
 		c1.setModel(model);
 		c1.setName("c1");
-		c1.setScale(0.1f);
+		c1.setScale(new Vector3f(0.1f));
 //		c1.translate(new Vector3f(0.0f, 0.0f, 0.0f));
 		Character c2 = new Character("");
 		c2.setModel(model2);
 		c2.setTransparent(true);
 		c2.setName("c2");
-		c2.setScale(0.1f);
+		c2.setScale(new Vector3f(0.1f));
 		c2.translate(new Vector3f(1.6f, 0.5f, -2.0f));
 		Character c3 = new Character("");
 		c3.setModel(model);
 		c3.setName("c3");
-		c3.setScale(0.1f);
+		c3.setScale(new Vector3f(0.1f));
 		c3.translate(new Vector3f(-1.8f, 1.0f, -0.5f));
 		Character c4 = new Character("");
 		c4.setModel(model2);
 		c4.setName("c4");
-		c4.setScale(0.1f);
+		c4.setScale(new Vector3f(0.1f));
 		c4.translate(new Vector3f(0.2f, -1.0f, -5.0f));
-		scene.add(c1);
-//		scene.add(c2);
-//		scene.add(c3);
-//		scene.add(c4);
+		
+//		scene.add(c1);
+		scene.add(c2);
+		scene.add(c3);
+		scene.add(c4);
 //		scene.add(character);
 		
-		TestModel test = new TestModel();
-		test.load(gl);
-		test.setShaderID(shaderID);
-		test.setMatrixID(gl.glGetUniformLocation(shaderID, "MVP"));
-		c1.setModel(test);
-		
-		Terrain t = new Terrain(2);
-		TerrainModel tm = new TerrainModel();
+		Terrain t = new Terrain(512);
 		t.load(gl, "src/assets/mountains512.png");
 		t.getModel().setShaderID(terrainShaderID);
 		t.getModel().setMatrixID(gl.glGetUniformLocation(terrainShaderID, "MVP"));
-//		scene.add(t);
+//		t.setModel(tm);
+//		t.setScale(1.0f);
+		t.setScale(new Vector3f(300.0f, 10.0f, 300.0f));
+		
+		scene.add(t);
 		
 		scene.add(player);
 		
