@@ -8,8 +8,6 @@ import java.nio.FloatBuffer;
 import javax.imageio.ImageIO;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
 import com.MyJogl.Logger.Logger;
 import com.MyJogl.Model.Model;
 import com.MyJogl.Model.TerrainModel;
