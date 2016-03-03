@@ -27,8 +27,6 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.util.Animator;
-import com.sun.java.swing.plaf.windows.resources.windows;
-import com.sun.org.apache.xml.internal.resolver.helpers.Debug;
 
 
 

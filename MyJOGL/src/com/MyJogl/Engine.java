@@ -116,10 +116,6 @@ public class Engine implements GLEventListener {
 		menuBar.add(menu);
 		window.setMenuBar(menuBar);
 		
-<<<<<<< master
-=======
-		
->>>>>>> a4246be Big update. Changes to testing. Began Terrain implementation.
 		//ui buttons
 		JButton runButton = new JButton("Run...");
 		runButton.setSize(new Dimension(30, 20));
@@ -167,10 +163,7 @@ public class Engine implements GLEventListener {
 		//shutdown the game instance if it exists and is running
 		if( game != null )
 			game.stop();
-<<<<<<< master
-		
-=======
->>>>>>> a4246be Big update. Changes to testing. Began Terrain implementation.
+
 	}
 
 	@Override
