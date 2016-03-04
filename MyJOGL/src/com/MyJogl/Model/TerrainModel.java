@@ -129,7 +129,7 @@ public class TerrainModel extends Model {
 		//draw the model
 //		gl.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
 		
-		gl.glDrawElements(GL.GL_LINES, numIndices, GL.GL_UNSIGNED_INT, 0);
+		gl.glDrawElements(GL.GL_TRIANGLES, numIndices, GL.GL_UNSIGNED_INT, 0);
 		
 		//unbind the VAO
 		gl.glBindVertexArray(0);

@@ -24,7 +24,8 @@ public class Player extends Character {
 	
 	public void moveForward() {
 		this.translate(new Vector3f(0.0f, 0.0f, moveSpeed));
-		camera.translate(new Vector3f(0.0f, 0.0f, moveSpeed));
+		Logger.writeToLog(translation);
+		camera.translate(new Vector3f(0.0f, 0.0f, moveSpeed).rotate(rotation));
 		camera.updateView();
 	}
 	

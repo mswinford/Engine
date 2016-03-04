@@ -34,10 +34,13 @@ public class Camera extends GameObject{
 
 	public void updateView() {
 		view.identity()
-		.rotate(rotation)
 		.translate(translation)
+		.rotate(rotation)
 		.lookAt(0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f)
 		;
+		
+		
+		
 	}
 	
 	public Matrix4f getVP() {
