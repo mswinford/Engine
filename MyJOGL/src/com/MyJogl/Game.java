@@ -277,7 +277,6 @@ public class Game implements GLEventListener, Runnable {
 		t.load(gl, "src/assets/mountains512.png");
 		t.getModel().setShaderID(terrainShaderID);
 		t.getModel().setMatrixID(gl.glGetUniformLocation(terrainShaderID, "MVP"));
-		t.getModel().setRenderMode(RenderMode.NORMAL);
 //		t.setModel(tm);
 //		t.setScale(1.0f);
 		t.setScale(new Vector3f(300.0f, 10.0f, 300.0f));

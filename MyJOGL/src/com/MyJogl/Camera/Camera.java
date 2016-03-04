@@ -1,7 +1,11 @@
 package com.MyJogl.Camera;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
 import com.MyJogl.GameObject.GameObject;
+import com.MyJogl.Logger.Logger;
 
 public class Camera extends GameObject{
 	protected Matrix4f view;
@@ -33,7 +37,6 @@ public class Camera extends GameObject{
 		.rotate(rotation)
 		.translate(translation)
 		.lookAt(0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f)
-		.invert()
 		;
 	}
 	
