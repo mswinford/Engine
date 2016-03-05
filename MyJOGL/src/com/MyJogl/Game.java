@@ -15,6 +15,7 @@ import com.MyJogl.Logger.Logger;
 import com.MyJogl.Model.Model;
 import com.MyJogl.Model.RenderMode;
 import com.MyJogl.Model.TerrainModel;
+import com.MyJogl.Util.MatrixUtil;
 import com.MyJogl.Util.ShaderUtil;
 import com.MyJogl.test.TestModel;
 import com.jogamp.newt.event.KeyEvent;
@@ -143,6 +144,7 @@ public class Game implements GLEventListener, Runnable {
 		drawable.getGL().setSwapInterval(vsync);
 		
 		projection = new Matrix4f().setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar);
+		projection = MatrixUtil.perspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar, false);
 
 		//this will move later when dynamic shader loading is implemented
 		shaderID = ShaderUtil.loadShaders(drawable.getGL().getGL4(), "src/assets/shaders/vertex.vp", "src/assets/shaders/fragment.fp");
@@ -161,8 +163,10 @@ public class Game implements GLEventListener, Runnable {
 		intializeTestScene(gl);
 		
 		player = new Player("Player");
-		player.setCamera(new FreeFlyCamera(0.1f));
-		player.getCamera().setProjection( projection );
+		FreeFlyCamera ffc = new FreeFlyCamera(0.1f);
+		ffc.setName("camera");
+		ffc.setProjection(projection);
+		player.addComponent(ffc);
 		input = new InputHandler(player);
 
 		//sceneManager.saveScene();
@@ -187,10 +191,12 @@ public class Game implements GLEventListener, Runnable {
 			int height) {
 		Config.windowSize.setSize(width, height);
 		Config.aspectRatio = ((float)width)/((float)height);
-		projection.setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar);
+		
+		projection.setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar).scale(-1.0f, 1.0f, 1.0f);
+		Logger.writeToLog(projection);
 		
 		//testing
-		player.getCamera().setProjection(projection);
+		((Camera)(player.getComponent("camera"))).setProjection(projection);
 	}
 	
 	
@@ -208,7 +214,7 @@ public class Game implements GLEventListener, Runnable {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		
-		Matrix4f vp = player.getCamera().getVP();
+		Matrix4f vp = ((Camera)(player.getComponent("camera"))).getVP();
 		
 		//below is for testing		
 		sceneManager.drawScene(gl, vp);
@@ -249,25 +255,25 @@ public class Game implements GLEventListener, Runnable {
 		c1.setModel(model);
 		c1.setName("c1");
 		c1.setScale(new Vector3f(0.1f));
-//		c1.translate(new Vector3f(0.0f, 0.0f, 0.0f));
+		c1.translate(new Vector3f(0.0f, 0.0f, 1.0f));
 		Character c2 = new Character("");
 		c2.setModel(model2);
 		c2.setTransparent(true);
 		c2.setName("c2");
 		c2.setScale(new Vector3f(0.1f));
-		c2.translate(new Vector3f(1.6f, 0.5f, -2.0f));
+		c2.translate(new Vector3f(0.0f, 1.5f, 1.0f));
 		Character c3 = new Character("");
 		c3.setModel(model);
 		c3.setName("c3");
 		c3.setScale(new Vector3f(0.1f));
-		c3.translate(new Vector3f(-1.8f, 1.0f, -0.5f));
+		c3.translate(new Vector3f(1.0f, 1.5f, 1.0f));
 		Character c4 = new Character("");
 		c4.setModel(model2);
 		c4.setName("c4");
 		c4.setScale(new Vector3f(0.1f));
-		c4.translate(new Vector3f(0.2f, -1.0f, -5.0f));
+		c4.translate(new Vector3f(0.0f, -1.0f, -5.0f));
 		
-//		scene.add(c1);
+		scene.add(c1);
 		scene.add(c2);
 		scene.add(c3);
 		scene.add(c4);
@@ -277,11 +283,28 @@ public class Game implements GLEventListener, Runnable {
 		t.load(gl, "src/assets/mountains512.png");
 		t.getModel().setShaderID(terrainShaderID);
 		t.getModel().setMatrixID(gl.glGetUniformLocation(terrainShaderID, "MVP"));
+		t.getModel().setRenderMode(RenderMode.WIREFRAME);
 //		t.setModel(tm);
 //		t.setScale(1.0f);
 		t.setScale(new Vector3f(300.0f, 10.0f, 300.0f));
 		
+		Terrain t2 = new Terrain(512);
+		t2.setModel(t.getModel());
+		t2.translate(new Vector3f(-300.0f, 0.0f, 0.0f));
+		t2.scale(new Vector3f(300.0f, 10.0f, 300.0f));
+		Terrain t3 = new Terrain(512);
+		t3.setModel(t.getModel());
+		t3.translate(new Vector3f(-300.0f, 0.0f, 300.0f));
+		t3.scale(new Vector3f(300.0f, 10.0f, 300.0f));
+		Terrain t4 = new Terrain(512);
+		t4.setModel(t.getModel());
+		t4.translate(new Vector3f(0.0f, 0.0f, 300.0f));
+		t4.scale(new Vector3f(300.0f, 10.0f, 300.0f));
+		
 		scene.add(t);
+		scene.add(t2);
+		scene.add(t3);
+		scene.add(t4);
 		
 		scene.add(player);
 		

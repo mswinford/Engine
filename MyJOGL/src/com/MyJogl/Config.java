@@ -15,7 +15,7 @@ public class Config {
 	public static float FOV = 60.0f;
 	public static float aspectRatio = 4.0f/3.0f;
 	public static float zNear = 0.1f;
-	public static float zFar = 100.0f;
+	public static float zFar = 1000.0f;
 	
 	public Config() {
 		glp = GLProfile.getDefault();

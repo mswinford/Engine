@@ -50,8 +50,8 @@ public class Terrain extends GameObject implements Renderable {
 		float pos = 1.0f / (float)(size-1) ;
 		for( z=0; z<size; z++) {
 			for( x=0; x<size; x++) {
-				Color color = new Color(image.getRGB((int)x, (int)z));
-				y = clamp(color.getRed());
+				Color color = new Color(image.getRGB( (int)x, size-1-(int)z));
+				y = clamp(color.getRed()) - 0.5f;
 				int index = ((int)z * size * 3) + ((int)x * 3);
 				heightmap.put( index++, x * pos );
 				heightmap.put( index++, y);

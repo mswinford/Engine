@@ -78,7 +78,7 @@ public class TerrainModel extends Model {
 		ebo.rewind();
 		//end EBO
 		
-		Logger.writeToLog(Util.toStringIntBuffer(ebo));
+//		Logger.writeToLog(Util.toStringIntBuffer(ebo));
 		Logger.writeToLog(Util.toStringFloatBuffer(vbo));
 		//System.exit(0);
 		
