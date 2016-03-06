@@ -8,16 +8,12 @@ import com.MyJogl.Camera.FreeFlyCamera;
 import com.MyJogl.Debug.ThreadDebug;
 import com.MyJogl.GameConsole.GameConsole;
 import com.MyJogl.GameObject.Character;
-import com.MyJogl.GameObject.GameObject;
 import com.MyJogl.GameObject.Player;
 import com.MyJogl.GameObject.Terrain;
 import com.MyJogl.Logger.Logger;
 import com.MyJogl.Model.Model;
 import com.MyJogl.Model.RenderMode;
-import com.MyJogl.Model.TerrainModel;
-import com.MyJogl.Util.MatrixUtil;
 import com.MyJogl.Util.ShaderUtil;
-import com.MyJogl.test.TestModel;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.WindowAdapter;
@@ -144,7 +140,6 @@ public class Game implements GLEventListener, Runnable {
 		drawable.getGL().setSwapInterval(vsync);
 		
 		projection = new Matrix4f().setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar);
-		projection = MatrixUtil.perspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar, false);
 
 		//this will move later when dynamic shader loading is implemented
 		shaderID = ShaderUtil.loadShaders(drawable.getGL().getGL4(), "src/assets/shaders/vertex.vp", "src/assets/shaders/fragment.fp");
