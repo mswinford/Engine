@@ -85,4 +85,12 @@ public class InputHandler {
 	public void handleInput() {
 		
 	}
+	
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+	
+	public Player getPlayer() {
+		return player;
+	}
 }

@@ -45,7 +45,7 @@ public class Game implements GLEventListener, Runnable {
 	private InputHandler input;
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		Thread gameThread = new Thread(Game.createGame("Test Game"));
 		gameThread.run();
     }
@@ -56,6 +56,7 @@ public class Game implements GLEventListener, Runnable {
 		Config.initialize();
 		sceneManager = new SceneManager();
 		console = new GameConsole();
+		input = new InputHandler(null);
 	}
 	
 	public static Game createGame(String name) {
@@ -106,7 +107,7 @@ public class Game implements GLEventListener, Runnable {
         window.addGLEventListener(this);
         window.setPosition(500, 500);
         window.setSize((int)Config.windowSize.getWidth(), (int)Config.windowSize.getHeight());
-        window.setTitle("Game");
+        window.setTitle(this.name);
         window.setVisible(true);
         isRunning = true;
 	}
@@ -162,7 +163,7 @@ public class Game implements GLEventListener, Runnable {
 		ffc.setName("camera");
 		ffc.setProjection(projection);
 		player.addComponent(ffc);
-		input = new InputHandler(player);
+		input.setPlayer(player);
 
 		//sceneManager.saveScene();
 	}
@@ -175,7 +176,7 @@ public class Game implements GLEventListener, Runnable {
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		dt = (float)((double)animator.getLastFPSPeriod() / 1000.0D);
-		System.out.println(dt);
+		System.out.println( 1.0f / dt );
 		console.setFPS(animator.getLastFPS());
 		update();
 		render(drawable);
@@ -268,17 +269,17 @@ public class Game implements GLEventListener, Runnable {
 		c4.setScale(new Vector3f(0.1f));
 		c4.translate(new Vector3f(0.0f, -1.0f, -5.0f));
 		
-		scene.add(c1);
-		scene.add(c2);
-		scene.add(c3);
-		scene.add(c4);
+//		scene.add(c1);
+//		scene.add(c2);
+//		scene.add(c3);
+//		scene.add(c4);
 //		scene.add(character);
 		
 		Terrain t = new Terrain(512);
 		t.load(gl, "src/assets/mountains512.png");
 		t.getModel().setShaderID(terrainShaderID);
 		t.getModel().setMatrixID(gl.glGetUniformLocation(terrainShaderID, "MVP"));
-		t.getModel().setRenderMode(RenderMode.WIREFRAME);
+//		t.getModel().setRenderMode(RenderMode.WIREFRAME);
 //		t.setModel(tm);
 //		t.setScale(1.0f);
 		t.setScale(new Vector3f(300.0f, 10.0f, 300.0f));
@@ -297,9 +298,9 @@ public class Game implements GLEventListener, Runnable {
 		t4.scale(new Vector3f(300.0f, 10.0f, 300.0f));
 		
 		scene.add(t);
-		scene.add(t2);
-		scene.add(t3);
-		scene.add(t4);
+//		scene.add(t2);
+//		scene.add(t3);
+//		scene.add(t4);
 		
 		scene.add(player);
 		

@@ -1,21 +1,23 @@
 package com.MyJogl.GameObject;
 
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import com.MyJogl.Camera.Camera;
 import com.MyJogl.Logger.Logger;
+import com.jogamp.newt.NewtVersion;
 
 public class Player extends Character {
-	private float moveSpeed = 0.1f;
+	private float moveSpeed = 1.0f;
 
 	public Player(String name) {
 		super(name);
 	}
 	
 	public void moveForward() {
-		this.translate(new Vector3f(0.0f, 0.0f, moveSpeed));
+		this.translate(new Vector3f(0.0f, 0.0f, moveSpeed).rotate(rotation.invert(new Quaternionf()), new Vector3f()));
 		for( GameObject comp : components ) {
-			comp.translate(new Vector3f(0.0f, 0.0f, moveSpeed));
+			comp.translate(new Vector3f(0.0f, 0.0f, moveSpeed).rotate(comp.getRotation().invert(new Quaternionf()), new Vector3f()));
 			if( comp instanceof Camera ) {
 				((Camera) comp).updateView();
 			}
@@ -23,9 +25,9 @@ public class Player extends Character {
 	}
 	
 	public void moveBackward() {
-		this.translate(new Vector3f(0.0f, 0.0f, -moveSpeed));
+		this.translate(new Vector3f(0.0f, 0.0f, -moveSpeed).rotate(rotation.invert(new Quaternionf()), new Vector3f()));
 		for( GameObject comp : components ) {
-			comp.translate(new Vector3f(0.0f, 0.0f, -moveSpeed));
+			comp.translate( new Vector3f(0.0f, 0.0f, -moveSpeed).rotate(comp.getRotation().invert(new Quaternionf()), new Vector3f()));
 			if( comp instanceof Camera ) {
 				((Camera) comp).updateView();
 			}
@@ -33,9 +35,9 @@ public class Player extends Character {
 	}
 	
 	public void strafeLeft() {
-		this.translate(new Vector3f(-moveSpeed, 0.0f, 0.0f));
+		this.translate(new Vector3f(-moveSpeed, 0.0f, 0.0f).rotate(rotation.invert(new Quaternionf()), new Vector3f()));
 		for( GameObject comp : components ) {
-			comp.translate(new Vector3f(-moveSpeed, 0.0f, 0.0f));
+			comp.translate(new Vector3f(-moveSpeed, 0.0f, 0.0f).rotate(comp.getRotation().invert(new Quaternionf()), new Vector3f()));
 			if( comp instanceof Camera ) {
 				((Camera) comp).updateView();
 			}
@@ -43,9 +45,9 @@ public class Player extends Character {
 	}
 	
 	public void strafeRight() {
-		this.translate(new Vector3f(moveSpeed, 0.0f, 0.0f));
+		this.translate(new Vector3f(moveSpeed, 0.0f, 0.0f).rotate(rotation.invert(new Quaternionf()), new Vector3f()));
 		for( GameObject comp : components ) {
-			comp.translate(new Vector3f(moveSpeed, 0.0f, 0.0f));
+			comp.translate(new Vector3f(moveSpeed, 0.0f, 0.0f).rotate(comp.getRotation().invert(new Quaternionf()), new Vector3f()));
 			if( comp instanceof Camera ) {
 				((Camera) comp).updateView();
 			}
@@ -73,7 +75,7 @@ public class Player extends Character {
 	}
 	
 	public void lookLeft() {
-		float[] rot = {0.0f, 0.05f, 0.0f};
+		float[] rot = {0.0f, -0.05f, 0.0f};
 		this.rotate( rot );
 		for( GameObject comp : components ) {
 			comp.rotate( rot );
@@ -84,7 +86,7 @@ public class Player extends Character {
 	}
 	
 	public void lookRight() {
-		float[] rot = {0.0f, -0.05f, 0.0f};
+		float[] rot = {0.0f, 0.05f, 0.0f};
 		this.rotate( rot );
 		for( GameObject comp : components ) {
 			comp.rotate( rot );

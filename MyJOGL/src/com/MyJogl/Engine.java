@@ -140,7 +140,7 @@ public class Engine implements GLEventListener {
 			System.out.println("Game is already running");
 			return;
 		}
-		game = Game.createGame(gameName);
+		game = Game.createGame("Engine - Game");
 		gameThread = new Thread(game);
 		gameThread.run();
 	}
