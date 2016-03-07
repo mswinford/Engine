@@ -7,13 +7,14 @@ import com.MyJogl.Camera.Camera;
 import com.MyJogl.Camera.FreeFlyCamera;
 import com.MyJogl.Debug.ThreadDebug;
 import com.MyJogl.GameConsole.GameConsole;
-import com.MyJogl.GameObject.Character;
-import com.MyJogl.GameObject.Player;
-import com.MyJogl.GameObject.Terrain;
 import com.MyJogl.Logger.Logger;
 import com.MyJogl.Model.Model;
 import com.MyJogl.Model.RenderMode;
 import com.MyJogl.Util.ShaderUtil;
+import com.MyJogl.GameObject.Character;
+import com.MyJogl.GameObject.Player;
+import com.MyJogl.GameObject.terrain.QuadTree;
+import com.MyJogl.GameObject.terrain.Terrain;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.WindowAdapter;
@@ -107,6 +108,7 @@ public class Game implements GLEventListener, Runnable {
         window.addGLEventListener(this);
         window.setPosition(500, 500);
         window.setSize((int)Config.windowSize.getWidth(), (int)Config.windowSize.getHeight());
+        window.setFullscreen(Config.fullscreen);
         window.setTitle(this.name);
         window.setVisible(true);
         isRunning = true;
@@ -221,7 +223,7 @@ public class Game implements GLEventListener, Runnable {
 	
 	
 	
-	
+	/////////////////////////////////////////////////////DELETE!!!!/////////////////////////////////////////////////
 	
 	
 	
@@ -269,7 +271,7 @@ public class Game implements GLEventListener, Runnable {
 		c4.setScale(new Vector3f(0.1f));
 		c4.translate(new Vector3f(0.0f, -1.0f, -5.0f));
 		
-//		scene.add(c1);
+		scene.add(c1);
 //		scene.add(c2);
 //		scene.add(c3);
 //		scene.add(c4);
@@ -279,28 +281,32 @@ public class Game implements GLEventListener, Runnable {
 		t.load(gl, "src/assets/mountains512.png");
 		t.getModel().setShaderID(terrainShaderID);
 		t.getModel().setMatrixID(gl.glGetUniformLocation(terrainShaderID, "MVP"));
-//		t.getModel().setRenderMode(RenderMode.WIREFRAME);
+		t.getModel().setRenderMode(RenderMode.WIREFRAME);
 //		t.setModel(tm);
 //		t.setScale(1.0f);
-		t.setScale(new Vector3f(300.0f, 10.0f, 300.0f));
+		t.setScale(new Vector3f(2.0f, 1.0f, 2.0f));
 		
 		Terrain t2 = new Terrain(512);
 		t2.setModel(t.getModel());
-		t2.translate(new Vector3f(-300.0f, 0.0f, 0.0f));
-		t2.scale(new Vector3f(300.0f, 10.0f, 300.0f));
+		t2.translate(new Vector3f(-t2.getSize(), 0.0f, 0.0f));
 		Terrain t3 = new Terrain(512);
 		t3.setModel(t.getModel());
-		t3.translate(new Vector3f(-300.0f, 0.0f, 300.0f));
-		t3.scale(new Vector3f(300.0f, 10.0f, 300.0f));
+		t3.translate(new Vector3f(-t3.getSize(), 0.0f, t3.getSize()));
 		Terrain t4 = new Terrain(512);
 		t4.setModel(t.getModel());
-		t4.translate(new Vector3f(0.0f, 0.0f, 300.0f));
-		t4.scale(new Vector3f(300.0f, 10.0f, 300.0f));
+		t4.translate(new Vector3f(0.0f, 0.0f, t4.getSize()));
 		
-		scene.add(t);
+//		scene.add(t);
 //		scene.add(t2);
 //		scene.add(t3);
 //		scene.add(t4);
+		
+		
+		
+		QuadTree qt = new QuadTree(128);
+		Logger.writeToLog(qt.toString());
+		
+		
 		
 		scene.add(player);
 		

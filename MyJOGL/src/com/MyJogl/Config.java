@@ -10,7 +10,7 @@ public class Config {
 	public static GLProfile glp;
 	public static GLCapabilities caps;
 	public static Dimension windowSize = new Dimension(200, 150);
-	public static boolean fullscreen = true;
+	public static boolean fullscreen = false;
 	public static boolean vsync = false;
 	public static float FOV = 60.0f;
 	public static float aspectRatio = 4.0f/3.0f;

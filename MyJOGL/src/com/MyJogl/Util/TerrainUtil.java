@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.MyJogl.GameObject.Terrain;
+import com.MyJogl.GameObject.terrain.Terrain;
 import com.MyJogl.Model.TerrainModel;
 
 public class TerrainUtil {

@@ -1,4 +1,4 @@
-package com.MyJogl.GameObject;
+package com.MyJogl.GameObject.terrain;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -10,6 +10,8 @@ import javax.imageio.ImageIO;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import com.MyJogl.GameObject.GameObject;
+import com.MyJogl.GameObject.Renderable;
 import com.MyJogl.Logger.Logger;
 import com.MyJogl.Model.Model;
 import com.MyJogl.Model.TerrainModel;
@@ -48,13 +50,15 @@ public class Terrain extends GameObject implements Renderable {
 		}
 		
 		float pos = 1.0f / (float)(size-1) ;
+		pos = 1.0f;
 		for( z=0; z<size; z++) {
 			for( x=0; x<size; x++) {
 				Color color = new Color(image.getRGB( (int)x, size-1-(int)z));
-				y = clamp(color.getRed()) - 0.5f;
+//				y = clamp(color.getRed()) - 0.5f;
+				y = color.getRed();
 				int index = ((int)z * size * 3) + ((int)x * 3);
 				heightmap.put( index++, x * pos );
-				heightmap.put( index++, y);
+				heightmap.put( index++, y- 128);
 				heightmap.put( index, z * pos);
 			}
 		}
@@ -94,6 +98,9 @@ public class Terrain extends GameObject implements Renderable {
 	@Override
 	public void setTransparent(boolean trans) {
 		
+	}
+	public int getSize() {
+		return size;
 	}
 	
 	

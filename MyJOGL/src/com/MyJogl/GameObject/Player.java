@@ -75,7 +75,7 @@ public class Player extends Character {
 	}
 	
 	public void lookLeft() {
-		float[] rot = {0.0f, -0.05f, 0.0f};
+		float[] rot = {0.0f, 0.05f, 0.0f};
 		this.rotate( rot );
 		for( GameObject comp : components ) {
 			comp.rotate( rot );
@@ -86,7 +86,7 @@ public class Player extends Character {
 	}
 	
 	public void lookRight() {
-		float[] rot = {0.0f, 0.05f, 0.0f};
+		float[] rot = {0.0f, -0.05f, 0.0f};
 		this.rotate( rot );
 		for( GameObject comp : components ) {
 			comp.rotate( rot );
