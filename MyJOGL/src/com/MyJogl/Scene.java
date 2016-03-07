@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.joml.Matrix4f;
 
-import com.MyJogl.Logger.Logger;
 import com.MyJogl.GameObject.GameObject;
 import com.MyJogl.GameObject.Renderable;
 import com.jogamp.opengl.GL2;

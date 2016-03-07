@@ -3,8 +3,6 @@ package com.MyJogl.GameConsole;
 import java.awt.Color;
 import java.awt.Font;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.awt.TextRenderer;
 
 public class GameConsole {

@@ -1,8 +1,6 @@
 package com.MyJogl.Model;
 
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-
 import org.joml.Matrix4f;
 
 import com.MyJogl.Util.Util;

@@ -7,11 +7,6 @@ import com.MyJogl.Model.Model;
 
 public class PlayerCharacter extends Character {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 810174614080958148L;
-	
 	private Camera camera;
 	private float moveSpeed = 0.01f;
 

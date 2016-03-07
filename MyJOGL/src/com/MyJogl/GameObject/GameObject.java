@@ -6,8 +6,6 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import com.MyJogl.Logger.Logger;
-
 public abstract class GameObject {
 	protected String name;
 	protected Vector3f scale;

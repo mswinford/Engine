@@ -1,10 +1,7 @@
 package com.MyJogl.Camera;
 
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
-import com.MyJogl.Logger.Logger;
 import com.MyJogl.GameObject.GameObject;
 
 public class Camera extends GameObject{

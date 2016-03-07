@@ -141,8 +141,6 @@ public class Game implements GLEventListener, Runnable {
 		//enable or disable vsync
 		int vsync = Config.vsync ? 1 : 0;
 		drawable.getGL().setSwapInterval(vsync);
-		
-		projection = new Matrix4f().setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar);
 
 		//this will move later when dynamic shader loading is implemented
 		shaderID = ShaderUtil.loadShaders(drawable.getGL().getGL4(), "src/assets/shaders/vertex.vp", "src/assets/shaders/fragment.fp");
@@ -190,7 +188,9 @@ public class Game implements GLEventListener, Runnable {
 		Config.windowSize.setSize(width, height);
 		Config.aspectRatio = ((float)width)/((float)height);
 		
-		projection.setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar).scale(-1.0f, 1.0f, 1.0f);
+		projection = new Matrix4f().setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar);
+//		projection.identity().setOrtho(-width/2, width/2, -height/2, height/2, Config.zNear, Config.zFar);
+		projection.scale(-1.0f, 1.0f, 1.0f);
 		Logger.writeToLog(projection);
 		
 		//testing
@@ -271,7 +271,7 @@ public class Game implements GLEventListener, Runnable {
 		c4.setScale(new Vector3f(0.1f));
 		c4.translate(new Vector3f(0.0f, -1.0f, -5.0f));
 		
-		scene.add(c1);
+//		scene.add(c1);
 //		scene.add(c2);
 //		scene.add(c3);
 //		scene.add(c4);
@@ -296,15 +296,15 @@ public class Game implements GLEventListener, Runnable {
 		t4.setModel(t.getModel());
 		t4.translate(new Vector3f(0.0f, 0.0f, t4.getSize()));
 		
-//		scene.add(t);
+		scene.add(t);
 //		scene.add(t2);
 //		scene.add(t3);
 //		scene.add(t4);
 		
 		
 		
-		QuadTree qt = new QuadTree(128);
-		Logger.writeToLog(qt.toString());
+//		QuadTree qt = new QuadTree(128);
+//		Logger.writeToLog(qt.toString());
 		
 		
 		

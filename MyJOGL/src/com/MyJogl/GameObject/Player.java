@@ -4,8 +4,6 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import com.MyJogl.Camera.Camera;
-import com.MyJogl.Logger.Logger;
-import com.jogamp.newt.NewtVersion;
 
 public class Player extends Character {
 	private float moveSpeed = 1.0f;
