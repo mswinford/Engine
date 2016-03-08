@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 
 import org.joml.Matrix4f;
 
+import com.MyJogl.Camera.Camera;
 import com.MyJogl.GameObject.GameObject;
 import com.MyJogl.GameObject.Renderable;
 import com.MyJogl.Logger.Logger;
@@ -68,36 +69,28 @@ public class Terrain extends GameObject implements Renderable {
 	private float clamp(int a) {
 		return ((float)a) / 255.0f;
 	}
-	@Override
 	public void setModel(Model model) {
 		//this.model = (TerrainModel)model;
 		this.model = model;
 	}
-	@Override
 	public Model getModel() {
 		return model;
 	}
+	
 	@Override
-	public void draw(GL2 gl, Matrix4f vp) {
+	public void draw(GL2 gl, Camera camera) {
 		if(model != null) {
-			model.draw(gl, calcMVP(vp));
+			model.draw(gl, calcMVP(camera.getVP()));
 		}
 		else 
 			//Logger.writeToLog(name + " has no model");
 		
 		for (GameObject comp : components) {
 			if(comp != null && comp instanceof Renderable)
-				((Renderable)comp).draw(gl, vp);
+				((Renderable)comp).draw(gl, camera);
 		}
 	}
-	@Override
-	public boolean isTransparent() {
-		return false;
-	}
-	@Override
-	public void setTransparent(boolean trans) {
-		
-	}
+	
 	public int getSize() {
 		return size;
 	}

@@ -7,7 +7,11 @@ public class TerrainVertex {
 	private boolean enabled;
 	
 	public TerrainVertex() {
-		this( new Vector3f(), true);
+		this(new Vector3f(), false);
+	}
+	
+	public TerrainVertex(Vector3f position) {
+		this(position, false);
 	}
 	
 	public TerrainVertex(Vector3f position, boolean enabled) {

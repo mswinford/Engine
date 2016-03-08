@@ -8,18 +8,12 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
-public class Model {
+public class ObjModel extends Model{
 	//fields needed to draw the model. These are obtained from the loadObj method.
-	protected int[] buffers; //buffer to store the model's VAO, VBO, and EBO in that order
+
+	protected String modelPath;
 	
-	protected int shaderID;
-	protected int matrixID;
-	protected RenderMode mode;
-	
-	protected String name;
-	protected int numOfPolygons;
-	
-	public Model() {
+	public ObjModel() {
 		mode = RenderMode.NORMAL;
 		buffers = new int[3];
 	}
@@ -31,7 +25,11 @@ public class Model {
 		this.matrixID = matrixID;
 	}
 	
-	public void draw(GL2 gl, Matrix4f mvp) {
+	public void load(GL2 gl) {
+		numOfPolygons = Util.loadObj(gl, "src/assets/models/pyramid.obj", buffers);
+	}
+	
+	public void draw(GL2 gl, Matrix4f mvp) {		
 		//set the rendering mode
 		if(mode == RenderMode.NORMAL) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
@@ -47,19 +45,18 @@ public class Model {
 		FloatBuffer mvpBuf = Buffers.newDirectFloatBuffer(16);
 		mvp.get(mvpBuf);
 		gl.glUniformMatrix4fv(matrixID, 1, false, mvpBuf);
+		
+		//draw the model
 		gl.glBindVertexArray(buffers[0]);
-		
-		draw(gl);
-		
+		gl.glDrawArrays(GL.GL_TRIANGLES, 0, numOfPolygons);
+		//gl.glDrawElements(GL.GL_TRIANGLES, numIndices, GL.GL_UNSIGNED_INT, 0);
 		gl.glBindVertexArray(0);		
 	}
 
-	protected void draw(GL2 gl) {
-		//draw the model
-		gl.glDrawArrays(GL.GL_TRIANGLES, 0, numOfPolygons);
-		//gl.glDrawElements(GL.GL_TRIANGLES, numIndices, GL.GL_UNSIGNED_INT, 0);
+	public String getModelPath() {
+		return modelPath;
 	}
-	
+
 	public String getName() {
 		return name;
 	}

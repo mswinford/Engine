@@ -15,14 +15,14 @@ import com.jogamp.opengl.GL2;
 
 public class SceneManager {
 	private ArrayList<Scene> scenes;
-	private Scene scene;
+	private Scene activeScene;
 	
 	public SceneManager() {
-		scene = new Scene();		
+		activeScene = new Scene();		
 	}
 	
-	public void drawScene(GL2 gl, Matrix4f vp) {
-		scene.draw(gl, vp);
+	public void drawScene(GL2 gl) {
+		activeScene.draw(gl);
 	}
 	
 	public void initializeScene() {
@@ -30,22 +30,22 @@ public class SceneManager {
 	}
 
 	public void setScene(Scene scene) {
-		this.scene = scene;
+		this.activeScene = scene;
 		
 	}
 	public Scene getScene() {
-		return scene;
+		return activeScene;
 	}
 	
 	
 	public void saveScene() {
 		try {
-			File file = new File("src/" + scene.getSceneName() + ".scene");
+			File file = new File("src/" + activeScene.getSceneName() + ".scene");
 			if(!file.exists())
 				file.createNewFile();
 			FileOutputStream fs = new FileOutputStream(file);
 			ObjectOutputStream os = new ObjectOutputStream(fs);
-			os.writeObject(scene);
+			os.writeObject(activeScene);
 			os.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -59,7 +59,7 @@ public class SceneManager {
 		try {
 			FileInputStream fs = new FileInputStream(new File("src/" + sceneName + ".scene"));
 			ObjectInputStream is = new ObjectInputStream(fs);
-			scene = (Scene)is.readObject();
+			activeScene = (Scene)is.readObject();
 			is.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

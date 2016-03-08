@@ -248,4 +248,17 @@ public class Util {
 		return sb.toString();
 	}
 	
+	public static String toString2DFloatArray(float[][] array) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("2D Array Start:\n");
+		for (float[] sub : array) {
+			sb.append("[ ");
+			for (float f : sub) {
+				sb.append(f).append(", ");
+			}
+			sb.append("]\n");
+		}
+		sb.append("2D Array End");
+		return sb.toString();
+	}
 }

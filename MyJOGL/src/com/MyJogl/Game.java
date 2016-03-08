@@ -9,12 +9,15 @@ import com.MyJogl.Debug.ThreadDebug;
 import com.MyJogl.GameConsole.GameConsole;
 import com.MyJogl.Logger.Logger;
 import com.MyJogl.Model.Model;
+import com.MyJogl.Model.ObjModel;
 import com.MyJogl.Model.RenderMode;
 import com.MyJogl.Util.ShaderUtil;
+import com.MyJogl.Util.Util;
 import com.MyJogl.GameObject.Character;
 import com.MyJogl.GameObject.Player;
 import com.MyJogl.GameObject.terrain.QuadTree;
 import com.MyJogl.GameObject.terrain.Terrain;
+import com.MyJogl.GameObject.terrain.TerrainQT;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.WindowAdapter;
@@ -152,20 +155,20 @@ public class Game implements GLEventListener, Runnable {
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL.GL_LESS);
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
-//		gl.glCullFace(GL.GL_CCW);
+//		gl.glCullFace(GL.GL_CW);
 //		gl.glEnable(GL.GL_CULL_FACE);
 		
 		//below is for testing	
-		intializeTestScene(gl);
 		
 		player = new Player("Player");
 		FreeFlyCamera ffc = new FreeFlyCamera(0.1f);
 		ffc.setName("camera");
-		ffc.setProjection(projection);
+		Logger.writeToLog("projection: \n" + projection);
 		player.addComponent(ffc);
 		input.setPlayer(player);
-
-		//sceneManager.saveScene();
+		
+		
+		intializeTestScene(gl);
 	}
 
 	@Override
@@ -175,7 +178,7 @@ public class Game implements GLEventListener, Runnable {
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		dt = (float)((double)animator.getLastFPSPeriod() / 1000.0D);
+		dt = (float)((double)animator.getLastFPSPeriod() / 1000.0d);
 		System.out.println( 1.0f / dt );
 		console.setFPS(animator.getLastFPS());
 		update();
@@ -189,7 +192,6 @@ public class Game implements GLEventListener, Runnable {
 		Config.aspectRatio = ((float)width)/((float)height);
 		
 		projection = new Matrix4f().setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar);
-//		projection.identity().setOrtho(-width/2, width/2, -height/2, height/2, Config.zNear, Config.zFar);
 		projection.scale(-1.0f, 1.0f, 1.0f);
 		Logger.writeToLog(projection);
 		
@@ -199,23 +201,15 @@ public class Game implements GLEventListener, Runnable {
 	
 	
 	private void update() {		
-//		Runtime rt = Runtime.getRuntime();
-//		long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-//		Logger.writeToLog("MB used: " + usedMB);
 		
-//		character.setScale(character.getScale() + (scaleTheta * dt));
-//		character.translate(deltaXYZ.mul(dt, new Vector3f()));
-//		character.rotate(rot);
 	}
 	
 	private void render(GLAutoDrawable drawable) {		
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		
-		Matrix4f vp = ((Camera)(player.getComponent("camera"))).getVP();
-		
 		//below is for testing		
-		sceneManager.drawScene(gl, vp);
+		sceneManager.drawScene(gl);
 		
 		drawable.swapBuffers();
 		gl.glFlush();
@@ -231,13 +225,15 @@ public class Game implements GLEventListener, Runnable {
 	float scaleTheta = 0.0f;
 	Vector3f deltaXYZ = new Vector3f(0.01f, 0.0f, 0.0f);
 	float[] rot = {0.0f, 0.0f, 0.0f};
-	Model model = new Model();
-	Model model2 = new Model();
+	ObjModel model = new ObjModel();
+	ObjModel model2 = new ObjModel();
 	Character character = new Character("Test Character");
 	Scene scene = new Scene("Test Scene");
 		
 	public void intializeTestScene( GL2 gl ) {
 		Logger.writeToLog("initializing test scene");
+		
+		scene.setActiveView( (Camera)(player.getComponent("camera")) );
 		
 		model.load(gl);
 		model.setShaderID(shaderID);
@@ -296,17 +292,15 @@ public class Game implements GLEventListener, Runnable {
 		t4.setModel(t.getModel());
 		t4.translate(new Vector3f(0.0f, 0.0f, t4.getSize()));
 		
-		scene.add(t);
+//		scene.add(t);
 //		scene.add(t2);
 //		scene.add(t3);
 //		scene.add(t4);
 		
 		
 		
-//		QuadTree qt = new QuadTree(128);
-//		Logger.writeToLog(qt.toString());
-		
-		
+		TerrainQT ter = new TerrainQT(32);
+		scene.add(ter);
 		
 		scene.add(player);
 		

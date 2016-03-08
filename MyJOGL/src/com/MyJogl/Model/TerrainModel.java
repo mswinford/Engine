@@ -20,7 +20,6 @@ public class TerrainModel extends Model {
 		super();
 	}
 	
-	@Override
 	public void load(GL2 gl) {
 		float[] values = { 0.0f, 0.0f, 0.5f, 0.5f, 0.0f, 0.25f, 0.0f, -0.5f, 0.0f };
 		vbo = Buffers.newDirectFloatBuffer(values);
@@ -61,8 +60,8 @@ public class TerrainModel extends Model {
 		 */
 		
 		//start EBO
-		numIndices = ((size-1) * (size-1)) * 3 * 2;
-		ebo = Buffers.newDirectIntBuffer( numIndices );
+		numOfPolygons = ((size-1) * (size-1)) * 3 * 2;
+		ebo = Buffers.newDirectIntBuffer( numOfPolygons );
 		int index = 0;
 		for(int z=0; z<size-1; z++) {
 			for(int x=0; x<size-1; x++) {
@@ -129,7 +128,7 @@ public class TerrainModel extends Model {
 		//draw the model
 //		gl.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
 		
-		gl.glDrawElements(GL.GL_TRIANGLES, numIndices, GL.GL_UNSIGNED_INT, 0);
+		gl.glDrawElements(GL.GL_TRIANGLES, numOfPolygons, GL.GL_UNSIGNED_INT, 0);
 		
 		//unbind the VAO
 		gl.glBindVertexArray(0);

@@ -3,6 +3,7 @@ package com.MyJogl.GameObject;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import com.MyJogl.Camera.Camera;
 import com.MyJogl.Model.Model;
 import com.jogamp.opengl.GL2;
 
@@ -33,35 +34,31 @@ public class Character extends GameObject implements Renderable, Movable {
 	}
 	
 	@Override
-	public void draw(GL2 gl, Matrix4f vp) {
+	public void draw(GL2 gl, Camera camera) {		
 		if(model != null) {
-			model.draw(gl, calcMVP(vp));
+			model.draw(gl, calcMVP(camera.getVP()));
 		}
 		else 
 			//Logger.writeToLog(name + " has no model");
 		
 		for (GameObject comp : components) {
 			if(comp != null && comp instanceof Renderable)
-				((Renderable)comp).draw(gl, vp);
+				((Renderable)comp).draw(gl, camera);
 		}
 	}
 
-	@Override
 	public void setModel(Model model) {
 		this.model = model;
 	}
 
-	@Override
 	public Model getModel() {
 		return model;
 	}
 
-	@Override
 	public boolean isTransparent() {
 		return transparent;
 	}
 
-	@Override
 	public void setTransparent(boolean trans) {
 		this.transparent = trans;
 		
