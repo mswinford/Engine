@@ -3,7 +3,6 @@ package com.MyJogl.Model;
 import java.nio.FloatBuffer;
 import org.joml.Matrix4f;
 
-import com.MyJogl.Util.Util;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -11,6 +10,7 @@ import com.jogamp.opengl.GL2;
 public class Model {
 	//fields needed to draw the model. These are obtained from the loadObj method.
 	protected int[] buffers; //buffer to store the model's VAO, VBO, and EBO in that order
+	protected FloatBuffer vbo;
 	
 	protected int shaderID;
 	protected int matrixID;
@@ -22,6 +22,11 @@ public class Model {
 	public Model() {
 		mode = RenderMode.NORMAL;
 		buffers = new int[3];
+	}
+	
+	public Model(String name) {
+		this();
+		this.name = name;
 	}
 	
 	public void setShaderID(int shaderID) {
@@ -66,5 +71,13 @@ public class Model {
 	
 	public void setRenderMode(RenderMode mode) {
 		this.mode = mode;
+	}
+	
+	public FloatBuffer getVBO() {
+		return vbo;
+	}
+	
+	public void setVBO(FloatBuffer vbo) {
+		this.vbo = vbo;
 	}
 }

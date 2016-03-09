@@ -1,17 +1,12 @@
 package com.MyJogl.GameObject.terrain;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
+import java.nio.FloatBuffer;
 
 import org.joml.Vector3f;
 
 import com.MyJogl.Camera.Camera;
 import com.MyJogl.Logger.Logger;
-import com.jogamp.opengl.GL2;
+import com.MyJogl.Util.Util;
 
 public class QuadTree {
 	private static int LOD = 10; //the LOD distance
@@ -25,55 +20,37 @@ public class QuadTree {
 	private TerrainVertex center;
 	
 	public QuadTree(float[][] heights) {
-		this(heights, (QuadTree)null, 0, heights.length-1, 0, heights.length-1);
+		this(heights, (QuadTree)null, 0, 0, heights.length);
 	}
 
-	public QuadTree(float[][] heights, QuadTree parent, int minX, int maxX, int minZ, int maxZ) {
+	public QuadTree(float[][] heights, QuadTree parent, int minX, int minZ, int length) {
 		this.parent = parent;
 		
-		int halfX = (maxX - minX) / 2;
-		int halfZ = (maxZ - minZ) / 2;
+		int centerX = minX + (length / 2);
+		int centerZ = minZ + (length / 2);
+		int maxX = minX + length-1;
+		int maxZ = minZ + length-1;
 		
-		float y = 0.0f;
-		int x = 0, z = 0;
-		
-		x = minX + halfX;
-		z = minZ + halfZ;
-		y = heights[z][x];
 		center = new TerrainVertex();
-		center.setPosition( new Vector3f(x, y, z) );
+		center.setPosition( new Vector3f(centerX, heights[centerZ][centerX], centerZ) );
 		
-		//x is the same as the center vertex but z is maxZ
-		//x = minX + halfX;
-		z = maxZ;
-		y = heights[z][x];
 		north = new TerrainVertex();
-		north.setPosition( new Vector3f(x, y, z) );
-		
-		//x is the same as the center vertex but z is minZ
-		//x = minX + halfX;
-		z = minZ;
-		y = heights[z][x];
+		north.setPosition( new Vector3f(centerX, heights[maxZ][centerX], maxZ) );
+
 		south = new TerrainVertex();
-		south.setPosition( new Vector3f(x, y, z) );
+		south.setPosition( new Vector3f(centerX, heights[minZ][centerX], minZ) );
 		
-		//z is the same as the center vertex but x is maxX
-		x = maxX;
-		z = minZ + halfZ;
-		y = heights[z][x];
 		east = new TerrainVertex();
-		east.setPosition( new Vector3f(x, y, z) );
+		east.setPosition( new Vector3f(maxX, heights[centerZ][maxX], centerZ) );
 		
-		//z is the same as the center vertex but x is minX
-		x = minX;
-		//z = minZ + halfZ;
-		y = heights[z][x];
 		west = new TerrainVertex();
-		west.setPosition( new Vector3f(x, y, z) );
+		west.setPosition( new Vector3f(minX, heights[centerZ][minX], centerZ) );
 		
 		children = null;
 		
-		if( center.getPosition().distance(north.getPosition()) > 1.0f ) {
+		if( maxX - minX > 2 ) {
+			int subLength = (length / 2) + 1;
+			
 			//Create the child nodes. Else this is a leaf node, so don't create children.
 			children = new QuadTree[4];
 			/* Quadrants:
@@ -81,19 +58,19 @@ public class QuadTree {
 			 * 				Q1	Q2
 			 */
 			//Q1
-			children[0] = new QuadTree(heights, this, minX, (int)(center.getPosition().x), minZ, (int)(center.getPosition().z));
+			children[0] = new QuadTree(heights, this, minX, minZ, subLength);
 			//Q2
-			children[1] = new QuadTree(heights, this, (int)(center.getPosition().x), maxX, minZ, (int)(center.getPosition().z));
+			children[1] = new QuadTree(heights, this, (int)(center.getX()), minZ, subLength);
 			//Q3
-			children[2] = new QuadTree(heights, this, minX, (int)(center.getPosition().x), (int)(center.getPosition().z), maxZ);
+			children[2] = new QuadTree(heights, this, minX, (int)(center.getZ()), subLength);
 			//Q4
-			children[3] = new QuadTree(heights, this, (int)(center.getPosition().x), maxX, (int)(center.getPosition().z), maxZ);
+			children[3] = new QuadTree(heights, this, (int)(center.getX()), (int)(center.getZ()), subLength);
 		}
 		
 	}
 	
 	public int update(Camera camera) {
-		int numPolys = 0;
+		int numVertices = 0;
 		
 		//all base vertices must be enabled or the terrain will be missing whole quadrants at the top level
 		if(parent == null) {
@@ -119,35 +96,47 @@ public class QuadTree {
 		
 		//if children is null, then this is a leaf node and there are no children below to update.
 		//also return if the center is not enabled because if it isn't enabled then none of the sides are enabled
-		if( children != null && center.isEnabled() ) {
-			numPolys += 4;
+		if( children == null ) {
+			numVertices += 10;
+		}
+		else if( children != null && center.isEnabled() ) {
+			numVertices += 10;
 		
 			//if the center is enabled, update the child nodes
-			numPolys += children[0].update(camera);
-			numPolys += children[1].update(camera);
-			numPolys += children[2].update(camera);
-			numPolys += children[3].update(camera);
+			numVertices += children[0].update(camera);
+			numVertices += children[1].update(camera);
+			numVertices += children[2].update(camera);
+			numVertices += children[3].update(camera);
 			
 			//check each child. if the center is enabled, then the sides of this quad that make up the corners of the child must be enabled
 			if( children[0].getCenter().isEnabled() ) {
 				west.setEnabled(true);
 				south.setEnabled(true);
+				numVertices -= 2;
 			}
 			if( children[1].getCenter().isEnabled() ) {
 				east.setEnabled(true);
 				south.setEnabled(true);
+				numVertices -= 2;
 			}
 			if( children[2].getCenter().isEnabled() ) {
 				west.setEnabled(true);
 				north.setEnabled(true);
+				numVertices -= 2;
 			}
 			if( children[3].getCenter().isEnabled() ) {
 				east.setEnabled(true);
 				north.setEnabled(true);
+				numVertices -= 2;
+			}
+			
+			//if all children are enabled then this node is not responsible for any vertices
+			if( allChildrenEnabled() ) {
+				numVertices -= 2;
 			}
 		}
 		
-		return numPolys;
+		return numVertices;
 	}
 	
 	private void processVertex(TerrainVertex v, Camera c) {
@@ -160,42 +149,70 @@ public class QuadTree {
 		}
 	}
 	
-	public void render() {
+	public void render(QTModel model) {
 		//render via triangle fans.
-		//TRAVERSE THE TREE. Check each child node starting with Q1 and going counter-clockwise.
-		//if the child's center is enabled, 
-		//then set the starting vertex for the fan to it's most counter-clockwise edge and the ending vertex to the most clockwise edge if it hasn't already been set.
-		TerrainVertex start = null;
-		TerrainVertex end = null;
+		//recursively render each child until it gets to a leaf i.e. the center is disabled
+		if( !center.isEnabled() ) return;
 		
-		if( children[0].getCenter().isEnabled() ) {
-			if( end == null ) end = west;
-			start = south;
-		}
-		if( children[1].getCenter().isEnabled() ) {
-			if( end == null ) end = south;
-			start = east;
-		}
-		if( children[2].getCenter().isEnabled() ) {
-			if( end == null ) end = east;
-			start = north;
-		}
-		if( children[3].getCenter().isEnabled() ) {
-			if( end == null ) end = north;
-			start = west;
+		boolean isLeaf = false;
+		if(children == null) isLeaf = true;
+		
+		if( !isLeaf ) {
+			children[0].render(model);
+			children[1].render(model);
+			children[2].render(model);
+			children[3].render(model);
 		}
 		
-		//if the starting vertex is the same as the end vertex then all drawing is handled in the child nodes, so just return;
-		if( start == end ) return;
+		if( !isLeaf && allChildrenEnabled() ) {
+			return;
+		}
 		
-		//now render all the child nodes
-		children[0].render();
-		children[1].render();
-		children[2].render();
-		children[3].render();
+		//start adding to the VBO
+		FloatBuffer vbo = model.getVBO();
+		vbo.put(center.getXYZ());
 		
+		TerrainVertex corner = null;
+		//check each vertex including the corners and add it to the vbo if necessary
+		//start with the west vertex although this is arbitrary
 		
-		
+		//west
+		if( isLeaf || !(children[0].getCenter().isEnabled() && children[2].getCenter().isEnabled()) ) {
+			vbo.put(west.getXYZ());
+		}
+		//southwest corner
+		if( isLeaf || !children[0].getCenter().isEnabled() ) {
+			corner = new TerrainVertex( west.getPosition().add(south.getPosition(), new Vector3f()) );
+			vbo.put( corner.getXYZ() );
+		}
+		//south
+		if( isLeaf || !(children[0].getCenter().isEnabled() && children[1].getCenter().isEnabled()) ) {
+			vbo.put(south.getXYZ());
+		}
+		//southeast corner
+		if( isLeaf || !children[1].getCenter().isEnabled() ) {
+			corner = new TerrainVertex( south.getPosition().add(east.getPosition(), new Vector3f()) );
+			vbo.put( corner.getXYZ() );
+		}
+		//east
+		if( isLeaf || !(children[1].getCenter().isEnabled() && children[3].getCenter().isEnabled()) ) {
+			vbo.put(east.getXYZ());
+		}
+		//northeast corner
+		if( isLeaf || !children[3].getCenter().isEnabled() ) {
+			corner = new TerrainVertex( east.getPosition().add(north.getPosition(), new Vector3f()) );
+			vbo.put( corner.getXYZ() );
+		}
+		//north
+		if( isLeaf || !(children[3].getCenter().isEnabled() && children[2].getCenter().isEnabled()) ) {
+			vbo.put(north.getXYZ());
+		}
+		//northwest corner
+		if( isLeaf || !children[2].getCenter().isEnabled() ) {
+			corner = new TerrainVertex( north.getPosition().add(west.getPosition(), new Vector3f()) );
+			vbo.put( corner.getXYZ() );
+			vbo.put( west.getXYZ() );
+		}
 	}
 
 	public QuadTree[] getChildren() {
@@ -244,5 +261,13 @@ public class QuadTree {
 
 	public void setCenter(TerrainVertex center) {
 		this.center = center;
+	}
+	
+	private boolean allChildrenEnabled() {
+		if( children[0].getCenter().isEnabled() && children[1].getCenter().isEnabled() && children[2].getCenter().isEnabled() && children[3].getCenter().isEnabled()) {
+			return true;
+		}
+		
+		return false;
 	}
 }

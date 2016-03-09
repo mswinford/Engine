@@ -34,5 +34,25 @@ public class TerrainVertex {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
+	
+	public float getX() {
+		return position.x;
+	}
+	
+	public float getY() {
+		return position.y;
+	}
+	
+	public float getZ() {
+		return position.z;
+	}
+	
+	public float[] getXYZ() {
+		float[] xyz = new float[3];
+		xyz[0] = position.x;
+		xyz[1] = position.y;
+		xyz[2] = position.z;
+		return xyz;
+	}
 
 }

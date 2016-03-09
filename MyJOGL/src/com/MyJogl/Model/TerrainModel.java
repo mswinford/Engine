@@ -3,8 +3,6 @@ package com.MyJogl.Model;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import org.joml.Matrix4f;
-
 import com.MyJogl.Logger.Logger;
 import com.MyJogl.Util.Util;
 import com.jogamp.common.nio.Buffers;
@@ -13,7 +11,6 @@ import com.jogamp.opengl.GL2;
 
 public class TerrainModel extends Model {
 	final int STRIDE = 3;
-	FloatBuffer vbo;
 	int size;
 	
 	public TerrainModel() {
@@ -78,7 +75,7 @@ public class TerrainModel extends Model {
 		//end EBO
 		
 //		Logger.writeToLog(Util.toStringIntBuffer(ebo));
-		Logger.writeToLog(Util.toStringFloatBuffer(vbo));
+//		Logger.writeToLog(Util.toStringFloatBuffer(vbo));
 		//System.exit(0);
 		
 		//generate VAO, VBO, and EBO buffer IDs
@@ -105,33 +102,8 @@ public class TerrainModel extends Model {
 	}
 	
 	@Override
-	public void draw(GL2 gl, Matrix4f mvp) {
-		//set the rendering mode
-		if(mode == RenderMode.NORMAL) {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
-		}
-		else if(mode == RenderMode.WIREFRAME) {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_LINE);
-		}
-		
-		//set the shader
-		gl.glUseProgram(shaderID);
-		
-		//complete the calculation of the MVP matrix and pass it to the OpenGL uniform
-		FloatBuffer mvpBuf = Buffers.newDirectFloatBuffer(16);
-		mvp.get(mvpBuf);
-		gl.glUniformMatrix4fv(matrixID, 1, false, mvpBuf);
-		
-		//bind the VAO
-		gl.glBindVertexArray(buffers[0]);
-		
-		//draw the model
-//		gl.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
-		
+	public void draw(GL2 gl) {		
 		gl.glDrawElements(GL.GL_TRIANGLES, numOfPolygons, GL.GL_UNSIGNED_INT, 0);
-		
-		//unbind the VAO
-		gl.glBindVertexArray(0);
 	}
 	
 	

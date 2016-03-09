@@ -15,6 +15,7 @@ import com.MyJogl.Util.ShaderUtil;
 import com.MyJogl.Util.Util;
 import com.MyJogl.GameObject.Character;
 import com.MyJogl.GameObject.Player;
+import com.MyJogl.GameObject.terrain.QTModel;
 import com.MyJogl.GameObject.terrain.QuadTree;
 import com.MyJogl.GameObject.terrain.Terrain;
 import com.MyJogl.GameObject.terrain.TerrainQT;
@@ -118,11 +119,10 @@ public class Game implements GLEventListener, Runnable {
 	}
 	
 	public void stop() {
-		ThreadDebug.printAllThreads();
+//		ThreadDebug.printAllThreads();
 		window.getAnimator().stop();
 		window.lockSurface();
 		isRunning = false;
-		Logger.writeToLog("Active Threads: ");
 		Logger.writeToLog("Game Stopped");
 		Logger.dispose();
 	}
@@ -163,7 +163,6 @@ public class Game implements GLEventListener, Runnable {
 		player = new Player("Player");
 		FreeFlyCamera ffc = new FreeFlyCamera(0.1f);
 		ffc.setName("camera");
-		Logger.writeToLog("projection: \n" + projection);
 		player.addComponent(ffc);
 		input.setPlayer(player);
 		
@@ -193,7 +192,6 @@ public class Game implements GLEventListener, Runnable {
 		
 		projection = new Matrix4f().setPerspective((float)Math.toRadians(Config.FOV), Config.aspectRatio, Config.zNear, Config.zFar);
 		projection.scale(-1.0f, 1.0f, 1.0f);
-		Logger.writeToLog(projection);
 		
 		//testing
 		((Camera)(player.getComponent("camera"))).setProjection(projection);
@@ -281,26 +279,30 @@ public class Game implements GLEventListener, Runnable {
 //		t.setModel(tm);
 //		t.setScale(1.0f);
 		t.setScale(new Vector3f(2.0f, 1.0f, 2.0f));
-		
-		Terrain t2 = new Terrain(512);
-		t2.setModel(t.getModel());
-		t2.translate(new Vector3f(-t2.getSize(), 0.0f, 0.0f));
-		Terrain t3 = new Terrain(512);
-		t3.setModel(t.getModel());
-		t3.translate(new Vector3f(-t3.getSize(), 0.0f, t3.getSize()));
-		Terrain t4 = new Terrain(512);
-		t4.setModel(t.getModel());
-		t4.translate(new Vector3f(0.0f, 0.0f, t4.getSize()));
+//		
+//		Terrain t2 = new Terrain(512);
+//		t2.setModel(t.getModel());
+//		t2.translate(new Vector3f(-t2.getSize(), 0.0f, 0.0f));
+//		Terrain t3 = new Terrain(512);
+//		t3.setModel(t.getModel());
+//		t3.translate(new Vector3f(-t3.getSize(), 0.0f, t3.getSize()));
+//		Terrain t4 = new Terrain(512);
+//		t4.setModel(t.getModel());
+//		t4.translate(new Vector3f(0.0f, 0.0f, t4.getSize()));
 		
 //		scene.add(t);
 //		scene.add(t2);
 //		scene.add(t3);
 //		scene.add(t4);
 		
+		TerrainQT terrain = new TerrainQT(2);
+		QTModel qtm = ((QTModel)(terrain.getModel()));
+		qtm.setShaderID(terrainShaderID);
+		qtm.setMatrixID(gl.glGetUniformLocation(terrainShaderID, "MVP"));
+		qtm.initialize(gl);
+		qtm.setRenderMode(RenderMode.WIREFRAME);
 		
-		
-		TerrainQT ter = new TerrainQT(32);
-		scene.add(ter);
+		scene.add(terrain);
 		
 		scene.add(player);
 		

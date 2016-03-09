@@ -117,8 +117,8 @@ public class Util {
 //			EBO.add(face.getUVIndex().z);
 //		}
 		
-		Logger.writeToLog(VBO);
-		Logger.writeToLog(EBO);
+//		Logger.writeToLog(VBO);
+//		Logger.writeToLog(EBO);
 		
 				
 		//generate VAO, VBO, and EBO buffer IDs
@@ -173,8 +173,8 @@ public class Util {
 		Vector3i u = null;
 		Vector3i n = null;
 		
-		Logger.writeToLog(hasUVs);
-		Logger.writeToLog(hasNormals);
+//		Logger.writeToLog(hasUVs);
+//		Logger.writeToLog(hasNormals);
 		
 		v = new Vector3i(Integer.parseInt(i1[0])-1, Integer.parseInt(i2[0])-1, Integer.parseInt(i3[0])-1);
 		if ( hasUVs ) {
@@ -190,7 +190,7 @@ public class Util {
 		Face face = Face.createFace(v, u, n);
 		faces.add(face);
 		
-		Logger.writeToLog(face.getVertexIndex());
+//		Logger.writeToLog(face.getVertexIndex());
 //		Logger.writeToLog(face.getUVIndex());
 //		Logger.writeToLog(face.getNormalIndex());
 	}

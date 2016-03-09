@@ -7,13 +7,12 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.joml.Matrix4f;
-
 import com.MyJogl.Camera.Camera;
 import com.MyJogl.GameObject.GameObject;
 import com.MyJogl.GameObject.Renderable;
 import com.MyJogl.Logger.Logger;
 import com.MyJogl.Model.Model;
+import com.MyJogl.Util.Util;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL2;
 
@@ -31,7 +30,8 @@ public class TerrainQT extends GameObject implements Renderable{
 	
 	public TerrainQT(int size) {
 		//create a generic quadtree backed terrain of the given size. Terrain will be a flat square.
-		heights = generateFlatTerrain(size);
+		this();
+		heights = generateFlatTerrain(size + 1);
 		tree = new QuadTree(heights);
 	}
 	
@@ -82,7 +82,11 @@ public class TerrainQT extends GameObject implements Renderable{
 	@Override
 	public void draw(GL2 gl, Camera camera) {		
 		int x = tree.update(camera);
-		model.draw( gl, calcMVP(camera.getVP()), tree.render( Buffers.newDirectFloatBuffer(x) ) );
+		model.setVBO( Buffers.newDirectFloatBuffer(x * 3) );
+		tree.render(model);
+		model.getVBO().rewind();
+		Logger.writeToLog(Util.toStringFloatBuffer(model.getVBO()));
+		model.draw( gl, calcMVP(camera.getVP()));
 	}
 
 	public float[][] getHeights() {
@@ -91,5 +95,21 @@ public class TerrainQT extends GameObject implements Renderable{
 
 	public void setHeights(float[][] heights) {
 		this.heights = heights;
+	}
+
+	@Override
+	public Model getModel() {
+		return model;
+	}
+
+	@Override
+	public void setModel(Model model) {
+		if( model instanceof QTModel ) {
+			this.model = (QTModel)model;
+		}
+		else {
+			//invalid model type.
+			return;
+		}
 	}
 }
