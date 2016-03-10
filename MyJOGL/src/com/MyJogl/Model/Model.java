@@ -29,13 +29,6 @@ public class Model {
 		this.name = name;
 	}
 	
-	public void setShaderID(int shaderID) {
-		this.shaderID = shaderID;
-	}
-	public void setMatrixID(int matrixID) {
-		this.matrixID = matrixID;
-	}
-	
 	public void draw(GL2 gl, Matrix4f mvp) {
 		//set the rendering mode
 		if(mode == RenderMode.NORMAL) {
@@ -65,6 +58,14 @@ public class Model {
 		//gl.glDrawElements(GL.GL_TRIANGLES, numIndices, GL.GL_UNSIGNED_INT, 0);
 	}
 	
+	public void setShaderID(int shaderID) {
+		this.shaderID = shaderID;
+	}
+	
+	public void setMatrixID(int matrixID) {
+		this.matrixID = matrixID;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -79,5 +80,33 @@ public class Model {
 	
 	public void setVBO(FloatBuffer vbo) {
 		this.vbo = vbo;
+	}
+
+	public RenderMode getMode() {
+		return mode;
+	}
+
+	public void setMode(RenderMode mode) {
+		this.mode = mode;
+	}
+
+	public int getNumOfPolygons() {
+		return numOfPolygons;
+	}
+
+	public void setNumOfPolygons(int numOfPolygons) {
+		this.numOfPolygons = numOfPolygons;
+	}
+
+	public int getShaderID() {
+		return shaderID;
+	}
+
+	public int getMatrixID() {
+		return matrixID;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

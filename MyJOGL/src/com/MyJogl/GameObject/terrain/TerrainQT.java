@@ -81,11 +81,16 @@ public class TerrainQT extends GameObject implements Renderable{
 
 	@Override
 	public void draw(GL2 gl, Camera camera) {		
-		int x = tree.update(camera);
-		model.setVBO( Buffers.newDirectFloatBuffer(x * 3) );
+		int[] vals = tree.update(camera);
+		model.setVBO( Buffers.newDirectFloatBuffer(vals[0] * 3) );
+		model.setFirst(new int[vals[1]]);
+		model.setCount(new int[vals[1]]);
+		
+		Logger.writeToLog("capacity", model.getVBO().capacity());
 		tree.render(model);
-		model.getVBO().rewind();
-		Logger.writeToLog(Util.toStringFloatBuffer(model.getVBO()));
+		Logger.writeToLog("position", model.getVBO().position());
+		
+		
 		model.draw( gl, calcMVP(camera.getVP()));
 	}
 

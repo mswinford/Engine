@@ -271,14 +271,14 @@ public class Game implements GLEventListener, Runnable {
 //		scene.add(c4);
 //		scene.add(character);
 		
-		Terrain t = new Terrain(512);
-		t.load(gl, "src/assets/mountains512.png");
-		t.getModel().setShaderID(terrainShaderID);
-		t.getModel().setMatrixID(gl.glGetUniformLocation(terrainShaderID, "MVP"));
-		t.getModel().setRenderMode(RenderMode.WIREFRAME);
-//		t.setModel(tm);
-//		t.setScale(1.0f);
-		t.setScale(new Vector3f(2.0f, 1.0f, 2.0f));
+//		Terrain t = new Terrain(512);
+//		t.load(gl, "src/assets/mountains512.png");
+//		t.getModel().setShaderID(terrainShaderID);
+//		t.getModel().setMatrixID(gl.glGetUniformLocation(terrainShaderID, "MVP"));
+//		t.getModel().setRenderMode(RenderMode.WIREFRAME);
+////		t.setModel(tm);
+////		t.setScale(1.0f);
+//		t.setScale(new Vector3f(2.0f, 1.0f, 2.0f));
 //		
 //		Terrain t2 = new Terrain(512);
 //		t2.setModel(t.getModel());
@@ -295,13 +295,12 @@ public class Game implements GLEventListener, Runnable {
 //		scene.add(t3);
 //		scene.add(t4);
 		
-		TerrainQT terrain = new TerrainQT(2);
+		TerrainQT terrain = new TerrainQT(32);
 		QTModel qtm = ((QTModel)(terrain.getModel()));
 		qtm.setShaderID(terrainShaderID);
 		qtm.setMatrixID(gl.glGetUniformLocation(terrainShaderID, "MVP"));
 		qtm.initialize(gl);
 		qtm.setRenderMode(RenderMode.WIREFRAME);
-		
 		scene.add(terrain);
 		
 		scene.add(player);

@@ -1,3 +1,6 @@
 /Log.txt
-/com/
+/.gitignore
 /assets/
+/com/
+/fragment.fp
+/vertex.vp
