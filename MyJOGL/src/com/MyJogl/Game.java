@@ -295,12 +295,14 @@ public class Game implements GLEventListener, Runnable {
 //		scene.add(t3);
 //		scene.add(t4);
 		
-		TerrainQT terrain = new TerrainQT(32);
+//		TerrainQT terrain = new TerrainQT(512);
+		TerrainQT terrain = new TerrainQT("src/assets/Heightmap257.png");
 		QTModel qtm = ((QTModel)(terrain.getModel()));
 		qtm.setShaderID(terrainShaderID);
 		qtm.setMatrixID(gl.glGetUniformLocation(terrainShaderID, "MVP"));
 		qtm.initialize(gl);
 		qtm.setRenderMode(RenderMode.WIREFRAME);
+		terrain.scale(new Vector3f(256.f, 1.0f, 256.0f));
 		scene.add(terrain);
 		
 		scene.add(player);

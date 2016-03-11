@@ -27,6 +27,8 @@ public class InputHandler {
 		eventToAction.put(KeyEvent.VK_LEFT, "lookLeft");
 		eventToAction.put(KeyEvent.VK_D, "strafeRight");
 		eventToAction.put(KeyEvent.VK_RIGHT, "lookRight");
+		eventToAction.put(KeyEvent.VK_E, "lookUp");
+		eventToAction.put(KeyEvent.VK_C, "lookDown");
 		eventToAction.put(MouseEvent.EVENT_MOUSE_DRAGGED, "look");
 	}
 	
@@ -58,6 +60,12 @@ public class InputHandler {
 				}
 				if ( action.equals("lookRight") ) {
 					player.lookRight();
+				}
+				if ( action.equals("lookUp") ) {
+					player.lookUp();
+				}
+				if ( action.equals("lookDown") ) {
+					player.lookDown();
 				}
 			}
 			else if ( e instanceof MouseEvent) {

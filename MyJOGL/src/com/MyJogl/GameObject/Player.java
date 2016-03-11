@@ -93,6 +93,30 @@ public class Player extends Character {
 			}
 		}
 	}
+
+	public void lookUp() {
+		float[] rot = {0.05f, 0.0f, 0.0f};
+		this.rotate( rot );
+		for( GameObject comp : components ) {
+			comp.rotate( rot );
+			if( comp instanceof Camera ) {
+				((Camera) comp).updateView();
+			}
+		}
+		
+	}
+
+	public void lookDown() {
+		float[] rot = {-0.05f, 0.0f, 0.0f};
+		this.rotate( rot );
+		for( GameObject comp : components ) {
+			comp.rotate( rot );
+			if( comp instanceof Camera ) {
+				((Camera) comp).updateView();
+			}
+		}
+		
+	}
 	
 	
 }

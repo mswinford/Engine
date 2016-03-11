@@ -35,6 +35,12 @@ public class TerrainQT extends GameObject implements Renderable{
 		tree = new QuadTree(heights);
 	}
 	
+	public TerrainQT(String filepath) {
+		//create a generic quadtree backed terrain of the given size. Terrain will be a flat square.
+		this();
+		tree = new QuadTree(loadHeights(filepath));
+	}
+	
 	public static float[][] generateFlatTerrain(int size) {
 		float[][] heights = new float[size][size];
 		for( int z=0; z<size; z++ ) {
@@ -58,6 +64,7 @@ public class TerrainQT extends GameObject implements Renderable{
 		
 		size = image.getWidth();
 		heights = new float[size][size];
+		Logger.writeToLog("heights size", heights.length + " x " + heights[0].length);
 		
 		//ImageIO reads in the image from top left to bottom right and values go by column then row
 		/*
@@ -72,6 +79,7 @@ public class TerrainQT extends GameObject implements Renderable{
 		 */
 		for( int z=size-1; z>=0; z-- ) {
 			for( int x=0; x<size; x++ ) {
+				Logger.writeToLog("coordinates", x + ", " + z);
 				heights[z][x] = new Color(image.getRGB(x, z)).getRed();
 			}
 		}
@@ -80,18 +88,18 @@ public class TerrainQT extends GameObject implements Renderable{
 	}
 
 	@Override
-	public void draw(GL2 gl, Camera camera) {		
+	public void draw(GL2 gl, Camera camera) {	
+		//update the quadtree. returns the number of vertices that need to be drawn along with the number of nodes that are actually going to draw anything
 		int[] vals = tree.update(camera);
+		
+		//set the model's VBO to a new buffer with size equal to the nubmer of vertices * 3
 		model.setVBO( Buffers.newDirectFloatBuffer(vals[0] * 3) );
 		model.setFirst(new int[vals[1]]);
 		model.setCount(new int[vals[1]]);
 		
-		Logger.writeToLog("capacity", model.getVBO().capacity());
 		tree.render(model);
-		Logger.writeToLog("position", model.getVBO().position());
 		
-		
-		model.draw( gl, calcMVP(camera.getVP()));
+		model.draw( gl, calcMVP(camera.getVP()) );
 	}
 
 	public float[][] getHeights() {
