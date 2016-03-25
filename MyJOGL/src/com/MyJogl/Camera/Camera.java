@@ -3,7 +3,6 @@ package com.MyJogl.Camera;
 import org.joml.Matrix4f;
 
 import com.MyJogl.GameObject.GameObject;
-import com.MyJogl.Logger.Logger;
 
 public class Camera extends GameObject{
 	protected Matrix4f view;
@@ -39,6 +38,7 @@ public class Camera extends GameObject{
 		.translate(translation)
 		.lookAt(0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f)
 		;
+		//think i can take out the look at and scale the world by -1.0f along the z axis
 		
 		vp = projection.mul(view, new Matrix4f());
 	}

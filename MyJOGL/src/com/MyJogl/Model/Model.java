@@ -45,6 +45,7 @@ public class Model {
 		FloatBuffer mvpBuf = Buffers.newDirectFloatBuffer(16);
 		mvp.get(mvpBuf);
 		gl.glUniformMatrix4fv(matrixID, 1, false, mvpBuf);
+		
 		gl.glBindVertexArray(buffers[0]);
 		
 		draw(gl);
